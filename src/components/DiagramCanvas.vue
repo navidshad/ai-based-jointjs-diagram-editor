@@ -99,7 +99,7 @@ export default defineComponent({
       let { sx, sy } = this.paper.scale()
 
       let scaleSignal = isNegative(deltaY) ? -0.1 : 0.1
-      canvas.paper.scale(sx + scaleSignal, sy + scaleSignal)
+      // canvas.paper.scale(sx + scaleSignal, sy + scaleSignal)
     },
 
     addLinkFeature(graph: dia.Graph, paper: dia.Paper) {

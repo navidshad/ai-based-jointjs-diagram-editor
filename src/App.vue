@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted } from 'vue'
+import { provide } from 'vue'
 
-const main = ref<HTMLElement>()
+const main = ref<Element | null>(null)
 const bodySize = ref({ width: 0, height: 0 })
 
 const bodySizeObserver = new ResizeObserver(() => {
@@ -14,13 +15,15 @@ onMounted(() => {
   bodySizeObserver.observe(main.value!)
 })
 
-inject('bodySize', bodySize)
+provide('bodySize', bodySize)
 </script>
 
 <template>
-  <section ref="main">
+  <section class="w-screen h-screen" ref="main">
     <v-layout>
-      <RouterView />
+      <v-main>
+        <RouterView />
+      </v-main>
     </v-layout>
   </section>
 </template>
