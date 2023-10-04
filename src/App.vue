@@ -3,7 +3,7 @@ import { RouterView } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { provide } from 'vue'
 
-const main = ref<Element | null>(null)
+const main = ref<any | null>(null)
 const bodySize = ref({ width: 0, height: 0 })
 
 const bodySizeObserver = new ResizeObserver(() => {
@@ -12,18 +12,16 @@ const bodySizeObserver = new ResizeObserver(() => {
 })
 
 onMounted(() => {
-  bodySizeObserver.observe(main.value!)
+  bodySizeObserver.observe(main.value!.$el)
 })
 
 provide('bodySize', bodySize)
 </script>
 
 <template>
-  <section class="w-screen h-screen" ref="main">
-    <v-layout>
-      <v-main>
-        <RouterView />
-      </v-main>
-    </v-layout>
-  </section>
+  <v-layout>
+    <v-main class="w-screen h-screen" ref="main">
+      <RouterView />
+    </v-main>
+  </v-layout>
 </template>

@@ -5,50 +5,29 @@
 
   <!-- ACTIONBAR
   -->
-  <teleport to="#diagram-pan-header">
-    <action-header-component :width="bodySize?.width" @save="save" />
-  </teleport>
+
+  <action-header-component class="w-full absolute left-0 top-0 z-10" @save="save" />
 
   <!-- MENU TOGGLES
    -->
   <teleport to="#diagram-panel-toggle">
-    <v-btn-group class="rotate-90 mt-10" color="primary">
-      <v-btn
-        class="rounded-none"
-        icon="m"
-        size="small"
-        :color="isDefaultPanelShown ? 'blue' : 'blue-grey-lighten-5'"
-        @click="togglePanel('default')"
-      >
-        <v-icon
-          class="-rotate-90"
-          size="15"
-          :icon="!isDefaultPanelShown ? 'mdi-table-cog' : 'mdi-close'"
-          :color="!isDefaultPanelShown ? 'black' : 'white'"
-        />
-        <v-tooltip location="bottom" activator="parent">
-          <span>Toggle control panel</span>
-        </v-tooltip>
-      </v-btn>
-
-      <v-btn
-        class="rounded-none"
-        icon="m"
-        size="small"
-        :color="isTestPanelShown ? 'blue' : 'blue-grey-lighten-5'"
-        @click="togglePanel('tests-panel')"
-      >
-        <v-icon
-          class="-rotate-90"
-          size="15"
-          :icon="!isTestPanelShown ? 'mdi-test-tube' : 'mdi-close'"
-          :color="!isTestPanelShown ? 'black' : 'white'"
-        />
-        <v-tooltip location="bottom" activator="parent">
-          <span>Toggle Tests panel</span>
-        </v-tooltip>
-      </v-btn>
-    </v-btn-group>
+    <v-btn
+      class="rounded-sm"
+      variant="flat"
+      icon="m"
+      size="small"
+      :color="isDefaultPanelShown ? 'blue' : 'blue-grey-lighten-5'"
+      @click="togglePanel('default')"
+    >
+      <v-icon
+        size="15"
+        :icon="!isDefaultPanelShown ? 'mdi-table-cog' : 'mdi-close'"
+        :color="!isDefaultPanelShown ? 'black' : 'white'"
+      />
+      <v-tooltip location="bottom" activator="parent">
+        <span>Toggle control panel</span>
+      </v-tooltip>
+    </v-btn>
   </teleport>
 
   <!-- CONTROL PANEL DRAWER

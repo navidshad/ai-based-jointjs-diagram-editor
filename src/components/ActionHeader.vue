@@ -1,5 +1,5 @@
 <template>
-  <div class="action-header" :style="{ width: width + 'px' }">
+  <div v-bind="$attrs" class="action-header" :style="{ width: width + 'px' }">
     <div class="action-group">
       <v-btn icon="m" color="white" size="x-small" @click="resetPan">
         <v-icon size="15" icon="mdi-eye-refresh" />
@@ -81,7 +81,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
 import JsonViewComponent from './JsonView.vue'
 
@@ -124,6 +124,8 @@ export default defineComponent({
   height: 64px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  justify-items: center;
 }
 
 .action-group {
