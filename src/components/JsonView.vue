@@ -4,13 +4,11 @@
 
     <v-card-subtitle>
       You can edit the content.
-      <a href="https://resources.jointjs.com/tutorial" target="_blank"
-        ><u>documentation</u></a
-      >
+      <a href="https://resources.jointjs.com/tutorial" target="_blank"><u>documentation</u></a>
     </v-card-subtitle>
 
     <v-card-text class="">
-      <code-editor v-model="jsonContent" class="editor" lang="json" />
+      <v-textarea class="h-full" v-model="jsonContent" />
     </v-card-text>
 
     <v-card-actions>
@@ -21,25 +19,26 @@
 </template>
 
 <script>
-import { canvas } from "../services/canvas.service";
+import { canvas } from '../services/canvas.service'
+
 export default {
   data() {
     return {
-      jsonContent: "",
-    };
+      jsonContent: ''
+    }
   },
 
   mounted() {
-    this.jsonContent = canvas.graph.toJSON();
+    this.jsonContent = JSON.stringify(canvas.graph.toJSON(), null, 2)
   },
 
   methods: {
     update() {
-      canvas.updateByJson(this.jsonContent);
-      this.$emit("close");
-    },
-  },
-};
+      canvas.updateByJson(this.jsonContent)
+      this.$emit('close')
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -1,5 +1,5 @@
 <template>
-  <div class="action-header">
+  <div class="action-header" :style="{ width: width + 'px' }">
     <div class="action-group">
       <v-btn icon="m" color="white" size="x-small" @click="resetPan">
         <v-icon size="15" icon="mdi-eye-refresh" />
@@ -91,7 +91,8 @@ export default defineComponent({
   emits: ['save'],
 
   props: {
-    resetPan: { type: Function }
+    resetPan: { type: Function },
+    width: { type: Number, default: 0 }
   },
 
   data() {
