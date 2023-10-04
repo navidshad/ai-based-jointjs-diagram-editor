@@ -86,12 +86,13 @@ export default defineComponent({
   },
 
   mounted() {
-    this.load()
-
     canvas.hierarchyStore.addEvent('select', this.onElementSelected)
+
+    window.addEventListener('message', this.onMessage)
   },
 
   unmounted() {
+    window.removeEventListener('message', this.onMessage)
     canvas.hierarchyStore.removeEvent('select', this.onElementSelected)
   },
 
@@ -104,18 +105,20 @@ export default defineComponent({
     },
 
     save() {
-      // let body = {
-      //   file_contents: canvas.graph.toJSON(),
-      //   file_path: this.currentQuestion.diagrams_file_name
-      // }
-    },
-
-    load() {
-      // let filename = this.currentQuestion.diagrams_file_name
+      const data = canvas.graph.toJSON()
+      window.parent.postMessage({ type: 'graph', payload: data }, '*')
     },
 
     onElementSelected(element: HierarchyItem) {
       this.graph_element = element.id
+    },
+
+    onMessage(data: MessageEvent) {
+      const { type, payload } = data.data
+
+      if (type == 'graph' && payload) {
+        canvas.graph.fromJSON(payload)
+      }
     }
   }
 })
