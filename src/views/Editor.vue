@@ -1,3 +1,149 @@
 <template>
-  <div>Starting</div>
+  <!-- DIAGRAM CANVAS
+  -->
+  <diagram-canvas :width="bodySize?.width" :height="bodySize?.height" />
+
+  <!-- ACTIONBAR
+  -->
+  <teleport to="#diagram-pan-header">
+    <action-header-component :width="bodySize?.width" @save="save" />
+  </teleport>
+
+  <!-- MENU TOGGLES
+   -->
+  <teleport to="#diagram-panel-toggle">
+    <v-btn-group class="rotate-90 mt-10" color="primary">
+      <v-btn
+        class="rounded-none"
+        icon="m"
+        size="small"
+        :color="isDefaultPanelShown ? 'blue' : 'blue-grey-lighten-5'"
+        @click="togglePanel('default')"
+      >
+        <v-icon
+          class="-rotate-90"
+          size="15"
+          :icon="!isDefaultPanelShown ? 'mdi-table-cog' : 'mdi-close'"
+          :color="!isDefaultPanelShown ? 'black' : 'white'"
+        />
+        <v-tooltip location="bottom" activator="parent">
+          <span>Toggle control panel</span>
+        </v-tooltip>
+      </v-btn>
+
+      <v-btn
+        class="rounded-none"
+        icon="m"
+        size="small"
+        :color="isTestPanelShown ? 'blue' : 'blue-grey-lighten-5'"
+        @click="togglePanel('tests-panel')"
+      >
+        <v-icon
+          class="-rotate-90"
+          size="15"
+          :icon="!isTestPanelShown ? 'mdi-test-tube' : 'mdi-close'"
+          :color="!isTestPanelShown ? 'black' : 'white'"
+        />
+        <v-tooltip location="bottom" activator="parent">
+          <span>Toggle Tests panel</span>
+        </v-tooltip>
+      </v-btn>
+    </v-btn-group>
+  </teleport>
+
+  <!-- CONTROL PANEL DRAWER
+  -->
+  <control-panel-component :activeSlot="activePanel" />
 </template>
+
+<script lang="ts">
+import DiagramCanvas from '@/components/DiagramCanvas.vue'
+import ActionHeaderComponent from '@/components/ActionHeader.vue'
+import ControlPanelComponent from '@/components/ControlPanel.vue'
+
+import { canvas } from '../services/canvas.service'
+import { HierarchyItem } from '../model/hierarchy.model'
+import { defineComponent } from 'vue'
+import { inject } from 'vue'
+
+export default defineComponent({
+  components: {
+    DiagramCanvas,
+    ActionHeaderComponent,
+    ControlPanelComponent
+  },
+
+  setup() {
+    return {
+      bodySize: inject<{ width: number; height: number }>('bodySize')
+    }
+  },
+
+  data() {
+    return {
+      controlPanelToggle: false,
+      activePanel: 'none',
+      graph_element: ''
+    }
+  },
+
+  computed: {
+    isDefaultPanelShown() {
+      return this.activePanel == 'default'
+    },
+
+    isTestPanelShown() {
+      return this.activePanel == 'tests-panel'
+    }
+  },
+
+  watch: {
+    bodySize: {
+      deep: true,
+      handler(value) {
+        console.log('Body size changed')
+      }
+    }
+  },
+
+  mounted() {
+    this.load()
+
+    canvas.hierarchyStore.addEvent('select', this.onElementSelected)
+  },
+
+  unmounted() {
+    canvas.hierarchyStore.removeEvent('select', this.onElementSelected)
+  },
+
+  methods: {
+    togglePanel(type: string) {
+      if (this.activePanel == type) this.activePanel = 'none'
+      else {
+        this.activePanel = type
+      }
+    },
+
+    save() {
+      // let body = {
+      //   file_contents: canvas.graph.toJSON(),
+      //   file_path: this.currentQuestion.diagrams_file_name
+      // }
+    },
+
+    load() {
+      // let filename = this.currentQuestion.diagrams_file_name
+    },
+
+    onElementSelected(element: HierarchyItem) {
+      this.graph_element = element.id
+    }
+  }
+})
+</script>
+
+<style>
+.rounded-none {
+  border-radius: 0 !important;
+}
+</style>
