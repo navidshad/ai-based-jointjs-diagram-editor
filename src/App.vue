@@ -12,16 +12,18 @@ const bodySizeObserver = new ResizeObserver(() => {
 })
 
 onMounted(() => {
-  bodySizeObserver.observe(main.value!.$el)
+  bodySizeObserver.observe(main.value!)
 })
 
 provide('bodySize', bodySize)
 </script>
 
 <template>
-  <v-layout>
-    <v-main class="w-screen h-screen" ref="main">
-      <RouterView />
-    </v-main>
-  </v-layout>
+  <section ref="main">
+    <v-layout>
+      <v-main class="w-screen h-screen">
+        <RouterView />
+      </v-main>
+    </v-layout>
+  </section>
 </template>
