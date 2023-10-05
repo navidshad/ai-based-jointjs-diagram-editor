@@ -87,12 +87,11 @@ export default defineComponent({
 
   mounted() {
     canvas.hierarchyStore.addEvent('select', this.onElementSelected)
-
-    window.addEventListener('message', this.onMessage)
+    window.onmessage = this.onMessage
   },
 
   unmounted() {
-    window.removeEventListener('message', this.onMessage)
+    window.onmessage = null
     canvas.hierarchyStore.removeEvent('select', this.onElementSelected)
   },
 
@@ -113,11 +112,12 @@ export default defineComponent({
       this.graph_element = element.id
     },
 
-    onMessage(data: MessageEvent) {
-      const { type, payload } = data.data
+    onMessage(event: MessageEvent) {
+      const { type, payload } = event.data
 
       if (type == 'graph' && payload) {
-        canvas.graph.fromJSON(payload)
+        const diagram = typeof payload == 'string' ? JSON.parse(payload) : payload
+        canvas.graph.fromJSON(diagram)
       }
     }
   }
