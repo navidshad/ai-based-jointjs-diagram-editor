@@ -1,10 +1,12 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type { GraphEvent, SettingsEvent, Settings } from '@/types/ifram-events'
+import type { GraphEvent, Settings } from '@/types/ifram-events'
 import { canvas } from '@/services/canvas.service'
+import type { Diagram } from '@/types/general'
 
 export const useConfigStore = defineStore('config', () => {
   const settings = ref<Settings>({ update_per_change: false })
+  const diagramData = ref<Diagram>({ cells: [] })
 
   const updatePerChange = computed({
     get: () => settings.value.update_per_change,
@@ -15,22 +17,6 @@ export const useConfigStore = defineStore('config', () => {
   const configKey = computed(() => window.btoa(JSON.stringify(settings.value)))
 
   //
-  // Events
-  //
-  window.onmessage = (event) => {
-    const eventData = event.data
-
-    if (eventData.type === 'graph') {
-      const { payload } = eventData as GraphEvent
-      const diagram = typeof payload == 'string' ? JSON.parse(payload) : payload
-      canvas.updateByJson(diagram)
-    } else if (eventData.type === 'settings') {
-      const settingsEvent = eventData as SettingsEvent
-      settings.value = settingsEvent.payload
-    }
-  }
-
-  //
   // Methods
   //
   function updateParentWindowWithGraph() {
@@ -39,11 +25,24 @@ export const useConfigStore = defineStore('config', () => {
     window.parent.postMessage(event, '*')
   }
 
+  function inserDiagramData(data: Diagram) {
+    console.log('inserDiagramData', data)
+    diagramData.value = data
+  }
+
+  function insertSettins(settingsData: Settings) {
+    console.log('insertSettins', settingsData)
+    settings.value = settingsData
+  }
+
   return {
     settings,
+    diagramData,
     configKey,
     updatePerChange,
 
-    updateParentWindowWithGraph
+    updateParentWindowWithGraph,
+    inserDiagramData,
+    insertSettins
   }
 })
