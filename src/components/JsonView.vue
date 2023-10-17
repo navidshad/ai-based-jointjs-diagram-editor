@@ -18,8 +18,8 @@
   </v-card>
 </template>
 
-<script>
-import { canvas } from '../services/canvas.service'
+<script lang="ts">
+import { useDiagramStore } from '@/stores/diagram'
 
 export default {
   data() {
@@ -28,13 +28,19 @@ export default {
     }
   },
 
+  setup() {
+    return {
+      diagramStore: useDiagramStore()
+    }
+  },
+
   mounted() {
-    this.jsonContent = JSON.stringify(canvas.graph.toJSON(), null, 2)
+    this.jsonContent = JSON.stringify(this.diagramStore.graph.toJSON(), null, 2)
   },
 
   methods: {
     update() {
-      canvas.updateByJson(this.jsonContent)
+      this.diagramStore.inserDiagramData(this.jsonContent)
       this.$emit('close')
     }
   }

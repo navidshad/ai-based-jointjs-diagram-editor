@@ -1,7 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { GraphEvent, Settings } from '@/types/ifram-events'
-
 import { clone } from '@/helpers/object'
 
 export const useConfigStore = defineStore('config', () => {
