@@ -36,7 +36,7 @@ export const useDiagramStore = defineStore('diagram', () => {
     }
 
     // Update parent window with graph
-    useConfigStore().updateParentWindowWithGraph(data)
+    useConfigStore().updateParentWindowWithGraph(data as Diagram)
   }
 
   function addElement(element: dia.Element) {
