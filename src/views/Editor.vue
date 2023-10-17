@@ -44,6 +44,7 @@ import { canvas } from '../services/canvas.service'
 import { HierarchyItem } from '../model/hierarchy.model'
 import { defineComponent } from 'vue'
 import { inject } from 'vue'
+import { useConfigStore } from '@/stores/config'
 
 export default defineComponent({
   components: {
@@ -53,7 +54,10 @@ export default defineComponent({
   },
 
   setup() {
+    const configStore = useConfigStore()
+
     return {
+      configStore,
       bodySize: inject<{ width: number; height: number }>('bodySize')
     }
   },
@@ -87,11 +91,9 @@ export default defineComponent({
 
   mounted() {
     canvas.hierarchyStore.addEvent('select', this.onElementSelected)
-    window.onmessage = this.onMessage
   },
 
   unmounted() {
-    window.onmessage = null
     canvas.hierarchyStore.removeEvent('select', this.onElementSelected)
   },
 
@@ -104,21 +106,11 @@ export default defineComponent({
     },
 
     save() {
-      const data = canvas.graph.toJSON()
-      window.parent.postMessage({ type: 'graph', payload: data }, '*')
+      this.configStore.updateParentWindowWithGraph()
     },
 
     onElementSelected(element: HierarchyItem) {
       this.graph_element = element.id
-    },
-
-    onMessage(event: MessageEvent) {
-      const { type, payload } = event.data
-
-      if (type == 'graph' && payload) {
-        const diagram = typeof payload == 'string' ? JSON.parse(payload) : payload
-        canvas.graph.fromJSON(diagram)
-      }
     }
   }
 })
