@@ -5,7 +5,7 @@ export const wait = (seconds: number) => {
 }
 
 export const waitUntil = async (conditionMethod: () => boolean) => {
-  while (!conditionMethod()) {
+  while (conditionMethod()) {
     await wait(0.1)
   }
 }

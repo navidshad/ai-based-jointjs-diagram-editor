@@ -6,7 +6,10 @@
   <!-- ACTIONBAR
   -->
 
-  <action-header-component class="w-full absolute left-0 top-0 z-10" @save="save" />
+  <action-header-component
+    class="w-full absolute left-0 top-0 z-10"
+    @save="configStore.updateParentWindowWithGraph"
+  />
 
   <!-- MENU TOGGLES
    -->
@@ -35,85 +38,43 @@
   <control-panel-component :activeSlot="activePanel" />
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { inject, ref, computed, onMounted, onUnmounted } from 'vue'
 import DiagramCanvas from '@/components/DiagramCanvas.vue'
 import ActionHeaderComponent from '@/components/ActionHeader.vue'
 import ControlPanelComponent from '@/components/ControlPanel.vue'
-
 import { canvas } from '../services/canvas.service'
 import { HierarchyItem } from '../model/hierarchy.model'
-import { defineComponent } from 'vue'
-import { inject } from 'vue'
 import { useConfigStore } from '@/stores/config'
 
-export default defineComponent({
-  components: {
-    DiagramCanvas,
-    ActionHeaderComponent,
-    ControlPanelComponent
-  },
+const configStore = useConfigStore()
+const bodySize = inject<{ width: number; height: number }>('bodySize')
 
-  setup() {
-    const configStore = useConfigStore()
+const activePanel = ref<'default' | 'tests-panel' | 'none'>('none')
+const graph_element = ref('')
 
-    return {
-      configStore,
-      bodySize: inject<{ width: number; height: number }>('bodySize')
-    }
-  },
-
-  data() {
-    return {
-      controlPanelToggle: false,
-      activePanel: 'none',
-      graph_element: ''
-    }
-  },
-
-  computed: {
-    isDefaultPanelShown() {
-      return this.activePanel == 'default'
-    },
-
-    isTestPanelShown() {
-      return this.activePanel == 'tests-panel'
-    }
-  },
-
-  watch: {
-    bodySize: {
-      deep: true,
-      handler(value) {
-        console.log('Body size changed')
-      }
-    }
-  },
-
-  mounted() {
-    canvas.hierarchyStore.addEvent('select', this.onElementSelected)
-  },
-
-  unmounted() {
-    canvas.hierarchyStore.removeEvent('select', this.onElementSelected)
-  },
-
-  methods: {
-    togglePanel(type: string) {
-      if (this.activePanel == type) this.activePanel = 'none'
-      else {
-        this.activePanel = type
-      }
-    },
-
-    save() {
-      this.configStore.updateParentWindowWithGraph()
-    },
-
-    onElementSelected(element: HierarchyItem) {
-      this.graph_element = element.id
-    }
-  }
+const isDefaultPanelShown = computed(() => {
+  return activePanel.value == 'default'
 })
+
+onMounted(() => {
+  canvas.hierarchyStore.addEvent('select', onElementSelected)
+})
+
+onUnmounted(() => {
+  canvas.hierarchyStore.removeEvent('select', onElementSelected)
+})
+
+function togglePanel(type: string) {
+  if (activePanel.value == type) activePanel.value = 'none'
+  else {
+    activePanel.value = type as any
+  }
+}
+
+function onElementSelected(element: HierarchyItem) {
+  graph_element.value = element.id
+}
 </script>
 
 <style>
