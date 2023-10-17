@@ -17,8 +17,9 @@
 <script lang="ts">
 import { shapes } from 'jointjs'
 import { defineComponent } from 'vue'
-import { canvas } from '../services/canvas.service'
+
 import { resourcenames } from '../static/resource-names'
+import { useDiagramStore } from '@/stores/diagram'
 
 export default defineComponent({
   computed: {
@@ -27,9 +28,15 @@ export default defineComponent({
     }
   },
 
+  setup() {
+    return {
+      diagramStore: useDiagramStore()
+    }
+  },
+
   methods: {
     onDrop(event: DragEvent, img: string = '') {
-      let pos = canvas.paper.localToPaperPoint(event.clientX, event.clientY)
+      let pos = this.diagramStore.paper.localToPaperPoint(event.clientX, event.clientY)
 
       var image = new shapes.standard.Image()
       let title = img.split('/').pop()?.split('_')[0]
@@ -40,7 +47,7 @@ export default defineComponent({
       image.attr('label/text', title)
       image.attr('image/xlinkHref', img)
 
-      canvas.addElement(image)
+      this.diagramStore.addElement(image)
     }
   }
 })

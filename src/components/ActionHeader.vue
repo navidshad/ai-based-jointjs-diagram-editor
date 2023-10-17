@@ -73,7 +73,7 @@
     <!-- 
       CONTROL PANEL TOGGLE
      -->
-    <div class="action-group" id="diagram-panel-toggle"></div>
+    <div class="action-group" id="diagram-panel-toggle" />
   </div>
 
   <v-dialog v-model="jsonView" persistent>

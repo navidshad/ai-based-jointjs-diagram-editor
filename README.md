@@ -9,6 +9,7 @@ This a Jointjs Diagram Editor that generates json base diagrams, then you can us
 - [x] Connect Shapes
 - [x] Default KK Shapes
 - [x] Import/Export json data
+- [x] Iframe Communication
 - [ ] Edit Shape properties
 - [ ] Add custom images
 - [ ] Add group for a set of shapes
@@ -17,10 +18,22 @@ This a Jointjs Diagram Editor that generates json base diagrams, then you can us
 ## Ifram & Communication
 This Editor is being used by few other KodeKloud designer apps like Qize-Designer through an iframe, they talk to each other using `message` event. so if you want to use this editor in your application, you need to use it in an iframe and communicate with it using `message` event. the data structure of the message is as follow:
 
-| Property  | value      | Description                                    |
-| --------- | ---------- | ---------------------------------------------- |
-| `type`    | `graph`    | Type of the message. for now it's only 1 type. |
-| `payload` | `{object}` | An object contains diagram data.               |
+| Property  | value           | Description                      |
+| --------- | --------------- | -------------------------------- |
+| `type`    | `graph`         | To send/recieve diagram data.    |
+| `payload` | `{cells:[...]}` | An object contains diagram data. |
+
+| Property  | value      | Description                          |
+| --------- | ---------- | ------------------------------------ |
+| `type`    | `settings` | To set editor settings               |
+| `payload` | `{object}` | An object contains diagram settings. |
+
+## Iframe Settings
+You can setup the editor though query params of the iframe url. the following table shows the available query params.
+
+| Property            | value     | Description                                        |
+| ------------------- | --------- | -------------------------------------------------- |
+| `update_per_change` | `Boolean` | Recieve diagram update per any change on its graph |
 
 ## Recommended IDE Setup
 

@@ -6,7 +6,10 @@
   <!-- ACTIONBAR
   -->
 
-  <action-header-component class="w-full absolute left-0 top-0 z-10" @save="save" />
+  <action-header-component
+    class="w-full absolute left-0 top-0 z-10"
+    @save="configStore.updateParentWindowWithGraph"
+  />
 
   <!-- MENU TOGGLES
    -->
@@ -35,93 +38,28 @@
   <control-panel-component :activeSlot="activePanel" />
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { inject, ref, computed } from 'vue'
 import DiagramCanvas from '@/components/DiagramCanvas.vue'
 import ActionHeaderComponent from '@/components/ActionHeader.vue'
 import ControlPanelComponent from '@/components/ControlPanel.vue'
+import { useConfigStore } from '@/stores/config'
 
-import { canvas } from '../services/canvas.service'
-import { HierarchyItem } from '../model/hierarchy.model'
-import { defineComponent } from 'vue'
-import { inject } from 'vue'
+const configStore = useConfigStore()
+const bodySize = inject<{ width: number; height: number }>('bodySize')
 
-export default defineComponent({
-  components: {
-    DiagramCanvas,
-    ActionHeaderComponent,
-    ControlPanelComponent
-  },
+const activePanel = ref<'default' | 'tests-panel' | 'none'>('none')
 
-  setup() {
-    return {
-      bodySize: inject<{ width: number; height: number }>('bodySize')
-    }
-  },
-
-  data() {
-    return {
-      controlPanelToggle: false,
-      activePanel: 'none',
-      graph_element: ''
-    }
-  },
-
-  computed: {
-    isDefaultPanelShown() {
-      return this.activePanel == 'default'
-    },
-
-    isTestPanelShown() {
-      return this.activePanel == 'tests-panel'
-    }
-  },
-
-  watch: {
-    bodySize: {
-      deep: true,
-      handler(value) {
-        console.log('Body size changed')
-      }
-    }
-  },
-
-  mounted() {
-    canvas.hierarchyStore.addEvent('select', this.onElementSelected)
-    window.onmessage = this.onMessage
-  },
-
-  unmounted() {
-    window.onmessage = null
-    canvas.hierarchyStore.removeEvent('select', this.onElementSelected)
-  },
-
-  methods: {
-    togglePanel(type: string) {
-      if (this.activePanel == type) this.activePanel = 'none'
-      else {
-        this.activePanel = type
-      }
-    },
-
-    save() {
-      const data = canvas.graph.toJSON()
-      window.parent.postMessage({ type: 'graph', payload: data }, '*')
-    },
-
-    onElementSelected(element: HierarchyItem) {
-      this.graph_element = element.id
-    },
-
-    onMessage(event: MessageEvent) {
-      const { type, payload } = event.data
-
-      if (type == 'graph' && payload) {
-        const diagram = typeof payload == 'string' ? JSON.parse(payload) : payload
-        canvas.graph.fromJSON(diagram)
-      }
-    }
-  }
+const isDefaultPanelShown = computed(() => {
+  return activePanel.value == 'default'
 })
+
+function togglePanel(type: string) {
+  if (activePanel.value == type) activePanel.value = 'none'
+  else {
+    activePanel.value = type as any
+  }
+}
 </script>
 
 <style>
