@@ -22,8 +22,10 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { isNegative } from '@/helpers/math'
 import { canvas } from '../services/canvas.service'
 import { useConfigStore } from '@/stores/config'
+import { useDiagramStore } from '@/stores/diagram'
 
-const store = useConfigStore()
+const configStore = useConfigStore()
+const diagramStore = useDiagramStore()
 const editorEl = ref<HTMLElement | null>(null)
 let graph!: dia.Graph
 let paper!: dia.Paper
@@ -58,19 +60,19 @@ onMounted(() => intiateDiagram())
 
 // Update graph when new diagram data received
 watch(
-  () => store.diagramData.cells,
+  () => diagramStore.diagramData.cells,
   () => {
     graph.clear()
-    graph.fromJSON(store.diagramData)
+    graph.fromJSON(diagramStore.diagramData)
 
     // Update parent window with graph
-    store.updateParentWindowWithGraph(graph.toJSON())
+    configStore.updateParentWindowWithGraph(graph.toJSON())
   },
   { deep: true }
 )
 
 function intiateDiagram() {
-  graph = new dia.Graph(store.diagramData.cells, { cellNamespace: shapes })
+  graph = new dia.Graph(diagramStore.diagramData.cells, { cellNamespace: shapes })
 
   paper = new dia.Paper({
     el: editorEl.value,
@@ -90,8 +92,8 @@ function intiateDiagram() {
 
   // @ts-ignore
   graph.on('change', () => {
-    if (store.updatePerChange) {
-      store.updateParentWindowWithGraph(graph.toJSON())
+    if (configStore.updatePerChange) {
+      configStore.updateParentWindowWithGraph(graph.toJSON())
     }
   })
 
