@@ -62,6 +62,9 @@ watch(
   () => {
     graph.clear()
     graph.fromJSON(store.diagramData)
+
+    // Update parent window with graph
+    store.updateParentWindowWithGraph(graph.toJSON())
   },
   { deep: true }
 )
@@ -81,18 +84,17 @@ function intiateDiagram() {
     }
   })
 
-  addLinkFeature(graph, paper)
-}
+  //
+  // Events
+  //
 
-function onMouseWheel(event: WheelEvent) {
-  let { deltaY } = event
-  let { sx, sy } = paper.scale()
+  // @ts-ignore
+  graph.on('change', () => {
+    if (store.updatePerChange) {
+      store.updateParentWindowWithGraph(graph.toJSON())
+    }
+  })
 
-  let scaleSignal = isNegative(deltaY) ? -0.1 : 0.1
-  // canvas.paper.scale(sx + scaleSignal, sy + scaleSignal)
-}
-
-function addLinkFeature(graph: dia.Graph, paper: dia.Paper) {
   paper.on({
     'element:pointerdown': function (elementView, evt, x, y) {
       evt.data = { x, y }
@@ -136,6 +138,14 @@ function addLinkFeature(graph: dia.Graph, paper: dia.Paper) {
       }
     }
   })
+}
+
+function onMouseWheel(event: WheelEvent) {
+  let { deltaY } = event
+  let { sx, sy } = paper.scale()
+
+  let scaleSignal = isNegative(deltaY) ? -0.1 : 0.1
+  // canvas.paper.scale(sx + scaleSignal, sy + scaleSignal)
 }
 </script>
 

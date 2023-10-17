@@ -39,30 +39,19 @@
 </template>
 
 <script setup lang="ts">
-import { inject, ref, computed, onMounted, onUnmounted } from 'vue'
+import { inject, ref, computed } from 'vue'
 import DiagramCanvas from '@/components/DiagramCanvas.vue'
 import ActionHeaderComponent from '@/components/ActionHeader.vue'
 import ControlPanelComponent from '@/components/ControlPanel.vue'
-import { canvas } from '../services/canvas.service'
-import { HierarchyItem } from '../model/hierarchy.model'
 import { useConfigStore } from '@/stores/config'
 
 const configStore = useConfigStore()
 const bodySize = inject<{ width: number; height: number }>('bodySize')
 
 const activePanel = ref<'default' | 'tests-panel' | 'none'>('none')
-const graph_element = ref('')
 
 const isDefaultPanelShown = computed(() => {
   return activePanel.value == 'default'
-})
-
-onMounted(() => {
-  canvas.hierarchyStore.addEvent('select', onElementSelected)
-})
-
-onUnmounted(() => {
-  canvas.hierarchyStore.removeEvent('select', onElementSelected)
 })
 
 function togglePanel(type: string) {
@@ -70,10 +59,6 @@ function togglePanel(type: string) {
   else {
     activePanel.value = type as any
   }
-}
-
-function onElementSelected(element: HierarchyItem) {
-  graph_element.value = element.id
 }
 </script>
 

@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import type { GraphEvent, Settings } from '@/types/ifram-events'
 import { canvas } from '@/services/canvas.service'
 import type { Diagram } from '@/types/general'
+import { clone } from '@/helpers/object'
 
 export const useConfigStore = defineStore('config', () => {
   const settings = ref<Settings>({ update_per_change: false })
@@ -19,19 +20,16 @@ export const useConfigStore = defineStore('config', () => {
   //
   // Methods
   //
-  function updateParentWindowWithGraph() {
-    const data = canvas.graph.toJSON()
-    const event: GraphEvent = { type: 'graph', payload: data }
+  function updateParentWindowWithGraph(data: GraphEvent['payload']) {
+    const event: GraphEvent = { type: 'graph', payload: clone(data) }
     window.parent.postMessage(event, '*')
   }
 
   function inserDiagramData(data: Diagram) {
-    console.log('inserDiagramData', data)
     diagramData.value = data
   }
 
   function insertSettins(settingsData: Settings) {
-    console.log('insertSettins', settingsData)
     settings.value = settingsData
   }
 
