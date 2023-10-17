@@ -1,7 +1,7 @@
 <template>
   <v-list :key="key">
     <v-list-item
-      @click="activeItem(item)"
+      @click="activeItem(item as HierarchyItem)"
       v-for="(item, i) in hierarchyStore.data"
       :key="i"
       :value="item"
@@ -16,7 +16,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { HierarchyItem } from '../model/hierarchy.model'
-import { canvas } from '../services/canvas.service'
+import { useDiagramStore } from '@/stores/diagram'
 
 export default defineComponent({
   data(): { key: number; selected: HierarchyItem | null } {
@@ -25,22 +25,29 @@ export default defineComponent({
       selected: null
     }
   },
+
+  setup() {
+    return {
+      diagramStore: useDiagramStore()
+    }
+  },
+
   computed: {
     hierarchyStore() {
-      return canvas.hierarchyStore
+      return this.diagramStore.hierarchyStore
     }
   },
 
   mounted() {
-    canvas.hierarchyStore.addEvent('add', this.onItemAdded)
-    canvas.hierarchyStore.addEvent('remove', this.generateNewKey)
-    canvas.hierarchyStore.addEvent('select', this.activeItem)
+    this.diagramStore.hierarchyStore.addEvent('add', this.onItemAdded)
+    this.diagramStore.hierarchyStore.addEvent('remove', this.generateNewKey)
+    this.diagramStore.hierarchyStore.addEvent('select', this.activeItem)
   },
 
   beforeUnmount() {
-    canvas.hierarchyStore.removeEvent('add', this.onItemAdded)
-    canvas.hierarchyStore.removeEvent('remove', this.generateNewKey)
-    canvas.hierarchyStore.removeEvent('select', this.activeItem)
+    this.diagramStore.hierarchyStore.removeEvent('add', this.onItemAdded)
+    this.diagramStore.hierarchyStore.removeEvent('remove', this.generateNewKey)
+    this.diagramStore.hierarchyStore.removeEvent('select', this.activeItem)
   },
 
   methods: {
@@ -52,7 +59,7 @@ export default defineComponent({
       if (!item) return
 
       this.selected = item
-      canvas.hierarchyStore.activeItem(item)
+      this.diagramStore.hierarchyStore.activeItem(item)
       this.key = new Date().getTime()
     },
 

@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type { GraphEvent, SettingsEvent, Settings } from '@/types/ifram-events'
-import { canvas } from '@/services/canvas.service'
+import type { GraphEvent, Settings } from '@/types/ifram-events'
+import { clone } from '@/helpers/object'
 
 export const useConfigStore = defineStore('config', () => {
   const settings = ref<Settings>({ update_per_change: false })
@@ -15,28 +15,15 @@ export const useConfigStore = defineStore('config', () => {
   const configKey = computed(() => window.btoa(JSON.stringify(settings.value)))
 
   //
-  // Events
-  //
-  window.onmessage = (event) => {
-    const eventData = event.data
-
-    if (eventData.type === 'graph') {
-      const { payload } = eventData as GraphEvent
-      const diagram = typeof payload == 'string' ? JSON.parse(payload) : payload
-      canvas.updateByJson(diagram)
-    } else if (eventData.type === 'settings') {
-      const settingsEvent = eventData as SettingsEvent
-      settings.value = settingsEvent.payload
-    }
-  }
-
-  //
   // Methods
   //
-  function updateParentWindowWithGraph() {
-    const data = canvas.graph.toJSON()
-    const event: GraphEvent = { type: 'graph', payload: data }
+  function updateParentWindowWithGraph(data: GraphEvent['payload']) {
+    const event: GraphEvent = { type: 'graph', payload: clone(data) }
     window.parent.postMessage(event, '*')
+  }
+
+  function insertSettins(settingsData: Settings) {
+    settings.value = settingsData
   }
 
   return {
@@ -44,6 +31,7 @@ export const useConfigStore = defineStore('config', () => {
     configKey,
     updatePerChange,
 
-    updateParentWindowWithGraph
+    updateParentWindowWithGraph,
+    insertSettins
   }
 })

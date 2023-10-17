@@ -5,150 +5,137 @@
         Diagram Canvas
        -->
       <template v-slot:canvas>
-        <div ref="editor" @wheel="onMouseWheel" />
+        <div ref="editorEl" @wheel="onMouseWheel" />
       </template>
     </pan-component>
   </div>
 </template>
 
-<script lang="ts">
-import { dia, shapes, g } from 'jointjs'
+<script setup lang="ts">
+import { shapes, g } from 'jointjs'
 import 'jointjs/dist/joint.css'
 
 import PanComponent from './Pan.vue'
 
-import { isNegative } from '@/helpers/math'
-import { defineComponent } from 'vue'
-import { canvas } from '../services/canvas.service'
 import { type CustomElementView } from '@/types/general'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 
-export default defineComponent({
-  components: { PanComponent },
+import { useConfigStore } from '@/stores/config'
+import { useDiagramStore } from '@/stores/diagram'
 
-  props: {
-    width: { type: Number, default: 400 },
-    height: { type: Number, default: 400 }
+const configStore = useConfigStore()
+const diagramStore = useDiagramStore()
+const editorEl = ref<HTMLElement | null>(null)
+
+const props = defineProps({
+  width: {
+    type: Number,
+    default: 400
   },
-
-  data() {
-    return {
-      controlPanelToggle: false
-    }
-  },
-
-  computed: {
-    paper() {
-      return canvas.paper
-    },
-
-    graph() {
-      return canvas.graph
-    },
-
-    frameSize() {
-      return {
-        width: this.width,
-        height: this.height
-      }
-    },
-
-    canvasSize() {
-      return {
-        width: this.width,
-        height: this.height
-      }
-    }
-  },
-
-  watch: {
-    width() {
-      this.paper.setDimensions(this.width, this.height)
-    },
-    height() {
-      this.paper.setDimensions(this.width, this.height)
-    }
-  },
-
-  mounted() {
-    this.intiateDiagram()
-  },
-
-  methods: {
-    intiateDiagram() {
-      let graph = new dia.Graph({}, { cellNamespace: shapes })
-
-      let paper = new dia.Paper({
-        // @ts-ignore
-        el: this.$refs.editor,
-        model: graph,
-        width: this.canvasSize.width,
-        height: this.canvasSize.height,
-        gridSize: 8,
-        drawGrid: true,
-        background: {
-          color: 'white'
-        }
-      })
-
-      canvas.setup(graph, paper)
-      this.addLinkFeature(graph, paper)
-    },
-
-    onMouseWheel(event: WheelEvent) {
-      let { deltaY } = event
-      let { sx, sy } = this.paper.scale()
-
-      let scaleSignal = isNegative(deltaY) ? -0.1 : 0.1
-      // canvas.paper.scale(sx + scaleSignal, sy + scaleSignal)
-    },
-
-    addLinkFeature(graph: dia.Graph, paper: dia.Paper) {
-      paper.on({
-        'element:pointerdown': function (elementView, evt, x, y) {
-          evt.data = { x, y }
-
-          // @ts-ignore
-          let id = elementView.id as string
-
-          let element = canvas.hierarchyStore.find(id)
-          canvas.hierarchyStore._eventBus.emit('select', element)
-          canvas.hierarchyStore.activeItem(element)
-        },
-
-        'element:pointerup': function (view, evt, x, y) {
-          let coordinates = new g.Point(x, y)
-
-          let sourceElementView = view as CustomElementView
-          let sourceElement = sourceElementView.model
-
-          let destElementView = paper.findViewsFromPoint(coordinates).find(function (el) {
-            // @ts-ignore
-            return el.model.id !== sourceElement.id
-          }) as CustomElementView
-
-          if (!destElementView) return
-
-          let destElement = destElementView.model
-
-          // If the two elements are connected already, don't
-          // connect them again (this is application-specific though).
-          if (destElement && graph.getNeighbors(destElement).indexOf(sourceElement) === -1) {
-            // Move the element to the position before dragging.
-            sourceElement.position(evt.data.x, evt.data.y)
-
-            // Create a connection between elements.
-            var link = new shapes.standard.Link()
-            link.source(sourceElement)
-            link.target(destElement)
-            link.addTo(graph)
-
-            canvas.addStandardToolsViewsForLink(link)
-          }
-        }
-      })
-    }
+  height: {
+    type: Number,
+    default: 400
   }
 })
+
+const frameSize = computed(() => {
+  return {
+    width: props.width,
+    height: props.height
+  }
+})
+
+const canvasSize = computed(() => {
+  return {
+    width: props.width,
+    height: props.height
+  }
+})
+
+watch(props, () => diagramStore.paper?.setDimensions(props.width, props.height))
+
+// @ts-ignore
+onUnmounted(() => diagramStore.paper?.remove())
+onMounted(() => intiateDiagram())
+
+function intiateDiagram() {
+  diagramStore.addPaper({
+    el: editorEl.value,
+    model: diagramStore.graph,
+    width: canvasSize.value.width,
+    height: canvasSize.value.height,
+    gridSize: 8,
+    drawGrid: true,
+    background: {
+      color: 'white'
+    }
+  })
+
+  //
+  // Events
+  //
+
+  // @ts-ignore
+  diagramStore.graph.on('change', () => {
+    if (configStore.updatePerChange) {
+      configStore.updateParentWindowWithGraph(diagramStore.graph.toJSON())
+    }
+  })
+
+  diagramStore.paper?.on({
+    'element:pointerdown': function (elementView, evt, x, y) {
+      evt.data = { x, y }
+
+      // @ts-ignore
+      let id = elementView.id as string
+
+      let element = diagramStore.hierarchyStore.find(id)
+      diagramStore.hierarchyStore._eventBus.emit('select', element)
+      diagramStore.hierarchyStore.activeItem(element)
+    },
+
+    'element:pointerup': function (view, evt, x, y) {
+      let coordinates = new g.Point(x, y)
+
+      let sourceElementView = view as CustomElementView
+      let sourceElement = sourceElementView.model
+
+      let destElementView = diagramStore.paper?.findViewsFromPoint(coordinates).find(function (el) {
+        // @ts-ignore
+        return el.model.id !== sourceElement.id
+      }) as CustomElementView
+
+      if (!destElementView) return
+
+      let destElement = destElementView.model
+
+      // If the two elements are connected already, don't
+      // connect them again (this is application-specific though).
+      if (
+        destElement &&
+        diagramStore.graph.getNeighbors(destElement).indexOf(sourceElement) === -1
+      ) {
+        // Move the element to the position before dragging.
+        sourceElement.position(evt.data.x, evt.data.y)
+
+        // Create a connection between elements.
+        var link = new shapes.standard.Link()
+        link.source(sourceElement)
+        link.target(destElement)
+        link.addTo(diagramStore.graph)
+
+        diagramStore.addStandardToolsViewsForLink(link)
+      }
+    }
+  })
+}
+
+function onMouseWheel(_event: WheelEvent) {
+  // let { deltaY } = event
+  // let { sx, sy } = diagramStore.paper.scale()
+  // let scaleSignal = isNegative(deltaY) ? -0.1 : 0.1
+  // diagramStore.paper.scale(sx + scaleSignal, sy + scaleSignal)
+}
 </script>
 
 <style scoped>
