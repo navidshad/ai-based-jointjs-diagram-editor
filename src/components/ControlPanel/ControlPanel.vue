@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
-import { AdditionalPanel } from '../model/additional-panel.model'
+import { AdditionalPanel } from '@/model/additional-panel.model'
 import ControlPanelProperties from './ControlPanelProperties.vue'
 import ControlPanelShapes from './ControlPanelShapes.vue'
 
