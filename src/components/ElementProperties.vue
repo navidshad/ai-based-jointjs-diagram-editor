@@ -1,13 +1,33 @@
 <script setup lang="ts">
 import type { HierarchyItem } from '@/model/hierarchy.model'
+import { watch } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps<{
   item: HierarchyItem | null
 }>()
 
-function setLabel(value: string) {
-  props.item?.element.attr('label/text', value)
-  props.item?.changeLabel(value)
+watch(
+  () => props.item,
+  (value: HierarchyItem | null) => {
+    if (value) {
+      label.value = value.element.attr('label/text')
+    }
+  }
+)
+
+const label = ref('')
+watch(
+  () => label.value,
+  (value: string) => {
+    props.item?.element.attr('label/text', value)
+    props.item?.changeLabel(value)
+  }
+)
+
+function setZindex(value: string | number) {
+  // @TODO fix zindex
+  // z-index is the index on the array of elements
 }
 
 function setPosition(xValue: string | number, yValue: string | number) {
@@ -59,20 +79,22 @@ function setSize(wValue: string | number, hValue: string | number) {
             type="number"
           />
         </div>
+
+        <div class="flex space-x-2">
+          <v-text-field
+            :model-value="props.item.element.z()"
+            @update:model-value="setZindex"
+            label="ZIndex"
+            type="number"
+          />
+        </div>
       </v-card-text>
     </v-card>
 
     <v-card variant="plain">
       <v-card-title>Label</v-card-title>
       <v-card-text>
-        <v-text-field
-          :model-value="props.item.element.attr('label/text')"
-          @update:model-value="setLabel"
-          label="Label"
-          outlined
-          dense
-          class="w-full"
-        />
+        <v-text-field v-model:model-value="label" label="Label" outlined dense class="w-full" />
 
         <v-checkbox
           label="None Connectable with other elements"
