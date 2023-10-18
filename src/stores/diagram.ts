@@ -11,6 +11,26 @@ export const useDiagramStore = defineStore('diagram', () => {
   const graph = new dia.Graph([], { cellNamespace: shapes })
   const paper = ref<dia.Paper>(new dia.Paper({}))
 
+  //
+  // Global graph events
+  //
+
+  // @ts-ignore
+  graph.on('change', () => onChange())
+  // @ts-ignore
+  graph.on('add', () => onChange())
+  // @ts-ignore
+  graph.on('remove', () => onChange())
+
+  const configStore = useConfigStore()
+  function onChange() {
+    if (configStore.updatePerChange) {
+      configStore.updateParentWindowWithGraph(graph.toJSON())
+    }
+  }
+  //
+  // End global graph events
+
   function addPaper(options: dia.Paper.Options) {
     paper.value = new dia.Paper(options)
   }

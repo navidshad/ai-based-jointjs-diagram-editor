@@ -20,10 +20,8 @@ import PanComponent from './Pan.vue'
 import { type CustomElementView } from '@/types/general'
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 
-import { useConfigStore } from '@/stores/config'
 import { useDiagramStore } from '@/stores/diagram'
 
-const configStore = useConfigStore()
 const diagramStore = useDiagramStore()
 const editorEl = ref<HTMLElement | null>(null)
 
@@ -74,13 +72,6 @@ function intiateDiagram() {
   //
   // Events
   //
-
-  // @ts-ignore
-  diagramStore.graph.on('change', () => {
-    if (configStore.updatePerChange) {
-      configStore.updateParentWindowWithGraph(diagramStore.graph.toJSON())
-    }
-  })
 
   diagramStore.paper?.on({
     'element:pointerdown': function (elementView, evt, x, y) {
