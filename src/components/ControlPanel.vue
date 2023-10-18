@@ -7,7 +7,7 @@
       </v-tabs>
 
       <v-window class="flex-1 h-full" v-model="tab">
-        <v-window-item value="shapes" class="h-full">
+        <v-window-item value="shapes" class="h-full overflow-y-scroll">
           <control-panel-shapes />
         </v-window-item>
 

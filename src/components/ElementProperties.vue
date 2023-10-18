@@ -7,16 +7,18 @@ const props = defineProps<{
   item: HierarchyItem | null
 }>()
 
+const label = ref('')
+
 watch(
   () => props.item,
   (value: HierarchyItem | null) => {
     if (value) {
       label.value = value.element.attr('label/text')
     }
-  }
+  },
+  { immediate: true, deep: true }
 )
 
-const label = ref('')
 watch(
   () => label.value,
   (value: string) => {
@@ -44,7 +46,7 @@ function setSize(wValue: string | number, hValue: string | number) {
 </script>
 
 <template>
-  <div class="w-full" v-if="props.item">
+  <div class="w-full" v-if="props.item != null">
     <v-card variant="plain">
       <v-card-title>Transform</v-card-title>
       <v-card-text>
