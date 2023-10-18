@@ -10,6 +10,9 @@
         <v-btn variant="outlined" density="compact" id="add-custom-image" icon>
           <v-icon :size="16">mdi-image-plus-outline</v-icon>
           <add-custom-image-form activator="#add-custom-image" />
+          <v-tooltip location="top center" activator="parent">
+            <span>Add Custome Image</span>
+          </v-tooltip>
         </v-btn>
       </div>
       <div class="mb-10">
