@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { HierarchyItem } from '../model/hierarchy.model'
+import { HierarchyItem } from '@/model/hierarchy.model'
 import { useDiagramStore } from '@/stores/diagram'
 import { watch } from 'vue'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
