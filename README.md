@@ -10,8 +10,8 @@ This a Jointjs Diagram Editor that generates json base diagrams, then you can us
 - [x] Default KK Shapes
 - [x] Import/Export json data
 - [x] Iframe Communication
-- [ ] Edit Shape properties
-- [ ] Add custom images
+- [x] Edit Shape properties
+- [x] Add custom images
 - [ ] Add group for a set of shapes
 - [ ] Create and Manipulate Diagram by prompting.
 

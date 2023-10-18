@@ -9,64 +9,59 @@
     >
       <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
       <v-list-item-title v-text="item.name" />
+
+      <template v-slot:append>
+        <v-btn size="small" variant="text" icon="mdi-close" @click="onRemoveItem(item)" />
+      </template>
     </v-list-item>
   </v-list>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { HierarchyItem } from '../model/hierarchy.model'
 import { useDiagramStore } from '@/stores/diagram'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 
-export default defineComponent({
-  data(): { key: number; selected: HierarchyItem | null } {
-    return {
-      key: new Date().getTime(),
-      selected: null
-    }
-  },
+const diagramStore = useDiagramStore()
+const key = ref(new Date().getTime())
+const selected = ref<HierarchyItem | null>(null)
 
-  setup() {
-    return {
-      diagramStore: useDiagramStore()
-    }
-  },
+const emit = defineEmits<{ (event: 'selected', item: HierarchyItem): void }>()
 
-  computed: {
-    hierarchyStore() {
-      return this.diagramStore.hierarchyStore
-    }
-  },
+const hierarchyStore = computed(() => diagramStore.hierarchyStore)
 
-  mounted() {
-    this.diagramStore.hierarchyStore.addEvent('add', this.onItemAdded)
-    this.diagramStore.hierarchyStore.addEvent('remove', this.generateNewKey)
-    this.diagramStore.hierarchyStore.addEvent('select', this.activeItem)
-  },
-
-  beforeUnmount() {
-    this.diagramStore.hierarchyStore.removeEvent('add', this.onItemAdded)
-    this.diagramStore.hierarchyStore.removeEvent('remove', this.generateNewKey)
-    this.diagramStore.hierarchyStore.removeEvent('select', this.activeItem)
-  },
-
-  methods: {
-    generateNewKey() {
-      this.key = new Date().getTime()
-    },
-
-    activeItem(item: HierarchyItem | undefined | null) {
-      if (!item) return
-
-      this.selected = item
-      this.diagramStore.hierarchyStore.activeItem(item)
-      this.key = new Date().getTime()
-    },
-
-    onItemAdded(item: HierarchyItem) {
-      this.generateNewKey()
-      this.activeItem(item)
-    }
-  }
+onMounted(() => {
+  diagramStore.hierarchyStore.addEvent('add', onItemAdded)
+  diagramStore.hierarchyStore.addEvent('remove', generateNewKey)
+  diagramStore.hierarchyStore.addEvent('select', activeItem)
 })
+
+onBeforeUnmount(() => {
+  diagramStore.hierarchyStore.removeEvent('add', onItemAdded)
+  diagramStore.hierarchyStore.removeEvent('remove', generateNewKey)
+  diagramStore.hierarchyStore.removeEvent('select', activeItem)
+})
+
+function generateNewKey() {
+  key.value = new Date().getTime()
+}
+
+function activeItem(item: HierarchyItem | undefined | null) {
+  if (!item) return
+
+  selected.value = item
+  emit('selected', item)
+  diagramStore.hierarchyStore.activeItem(item)
+  key.value = new Date().getTime()
+}
+
+function onItemAdded(item: HierarchyItem) {
+  generateNewKey()
+  activeItem(item)
+}
+
+function onRemoveItem(item: HierarchyItem) {
+  diagramStore.graph.removeCells([item.element])
+  diagramStore.hierarchyStore.remove(item.id)
+}
 </script>
