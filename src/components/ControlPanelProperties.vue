@@ -1,20 +1,27 @@
 <template>
   <div class="split h-full">
     <div id="split-0" class="overflow-y-scroll h-full">
-      <hierarchy />
+      <hierarchy @selected="selected = $event" />
     </div>
-    <div id="split-1" class="overflow-y-scroll h-full"></div>
+    <div id="split-1" class="overflow-y-scroll h-full">
+      <ElementProperties :item="selected as any" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Split from 'split.js'
 import Hierarchy from './Hierarchy.vue'
-import { onMounted } from 'vue'
+import ElementProperties from './ElementProperties.vue'
+import { onMounted, ref } from 'vue'
+import type { HierarchyItem } from '@/model/hierarchy.model'
+
+const selected = ref<HierarchyItem | null>(null)
 
 onMounted(() => {
   Split(['#split-0', '#split-1'], {
-    direction: 'vertical'
+    direction: 'vertical',
+    sizes: [20, 80]
   })
 })
 </script>
