@@ -5,8 +5,10 @@ const props = defineProps<{
   item: HierarchyItem | null
 }>()
 
-// Contains all initial attributes of the element
-// elementView.model.attributes
+function setLabel(value: string) {
+  props.item?.element.attr('label/text', value)
+  props.item?.changeLabel(value)
+}
 
 function setPosition(xValue: string | number, yValue: string | number) {
   xValue = parseInt(xValue.toString())
@@ -65,11 +67,16 @@ function setSize(wValue: string | number, hValue: string | number) {
       <v-card-text>
         <v-text-field
           :model-value="props.item.element.attr('label/text')"
-          @update:model-value="props.item.element.attr('label/text', $event)"
+          @update:model-value="setLabel"
           label="Label"
           outlined
           dense
           class="w-full"
+        />
+        <v-checkbox
+          label="None Connectable with other elements"
+          :model-value="item?.element.prop('data/noneConectable')"
+          @update:model-value="item?.element.prop('data/noneConectable', $event)"
         />
       </v-card-text>
     </v-card>

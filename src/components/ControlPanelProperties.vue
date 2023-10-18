@@ -1,13 +1,13 @@
 <template>
   <div class="split h-full">
     <div id="split-0" class="overflow-y-scroll h-full relative">
-      <div class="border-b-2 border-t-2 fixed p-2 w-full bg-white z-10 flex">
+      <div class="flex justify-end border-b-2 border-t-2 fixed p-2 w-full bg-white z-10">
         <v-btn variant="outlined" density="compact" id="add-custom-image" icon>
           <v-icon :size="16">mdi-image-plus-outline</v-icon>
           <add-custom-image-form activator="#add-custom-image" />
         </v-btn>
       </div>
-      <div class="mt-3">
+      <div class="mt-10">
         <hierarchy @selected="selected = $event" />
       </div>
     </div>

@@ -100,9 +100,16 @@ function intiateDiagram() {
       let sourceElementView = view as CustomElementView
       let sourceElement = sourceElementView.model
 
+      // Ignore if the element is not connectable
+      if (sourceElement.prop('data/noneConectable') || false) return
+
       let destElementView = diagramStore.paper?.findViewsFromPoint(coordinates).find(function (el) {
         // @ts-ignore
-        return el.model.id !== sourceElement.id
+        const isNotSourceElemet = el.model.id !== sourceElement.id
+        // @ts-ignore
+        const isNoneConnectable = el.model.prop('data/noneConectable') || false
+
+        return isNotSourceElemet && !isNoneConnectable
       }) as CustomElementView
 
       if (!destElementView) return
