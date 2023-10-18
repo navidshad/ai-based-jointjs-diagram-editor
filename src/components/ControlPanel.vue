@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer location="right" permanent :model-value="active" :width="width">
+  <v-navigation-drawer location="right" permanent :model-value="activeSlot" :width="width">
     <section class="flex flex-col h-screen">
       <v-tabs v-model="tab" fixed-tabs>
         <v-tab value="properties">Properties</v-tab>
@@ -31,7 +31,7 @@ export default defineComponent({
   props: {
     // posible values
     // ['none', 'default', 'other-slot-values' from aditionalPanels memebrs]
-    activeSlot: { type: String, default: 'none' },
+    activeSlot: { type: Boolean, default: true },
 
     additionalPanels: {
       type: Array as PropType<AdditionalPanel[]>,
@@ -46,22 +46,8 @@ export default defineComponent({
   },
 
   computed: {
-    active() {
-      if (this.activeSlot == 'default') {
-        return true
-      } else {
-        return !!this.additionalPanels.find((item) => item.slot == this.activeSlot)
-      }
-    },
-
     width() {
-      if (this.activeSlot == 'default') {
-        return 400
-      } else {
-        let panel = this.additionalPanels?.find((item) => item.slot == this.activeSlot)
-
-        return panel ? panel.width : 400
-      }
+      return 400
     }
   }
 })

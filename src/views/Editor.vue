@@ -19,13 +19,13 @@
       variant="flat"
       icon="m"
       size="small"
-      :color="isDefaultPanelShown ? 'blue' : 'blue-grey-lighten-5'"
-      @click="togglePanel('default')"
+      :color="activePanel ? 'blue' : 'blue-grey-lighten-5'"
+      @click="activePanel = !activePanel"
     >
       <v-icon
         size="15"
-        :icon="!isDefaultPanelShown ? 'mdi-table-cog' : 'mdi-close'"
-        :color="!isDefaultPanelShown ? 'black' : 'white'"
+        :icon="!activePanel ? 'mdi-table-cog' : 'mdi-close'"
+        :color="!activePanel ? 'black' : 'white'"
       />
       <v-tooltip location="bottom" activator="parent">
         <span>Toggle control panel</span>
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject, ref, computed } from 'vue'
+import { inject, ref } from 'vue'
 import DiagramCanvas from '@/components/DiagramCanvas.vue'
 import ActionHeaderComponent from '@/components/ActionHeader.vue'
 import ControlPanelComponent from '@/components/ControlPanel.vue'
@@ -48,18 +48,7 @@ import { useConfigStore } from '@/stores/config'
 const configStore = useConfigStore()
 const bodySize = inject<{ width: number; height: number }>('bodySize')
 
-const activePanel = ref<'default' | 'tests-panel' | 'none'>('none')
-
-const isDefaultPanelShown = computed(() => {
-  return activePanel.value == 'default'
-})
-
-function togglePanel(type: string) {
-  if (activePanel.value == type) activePanel.value = 'none'
-  else {
-    activePanel.value = type as any
-  }
-}
+const activePanel = ref(true)
 </script>
 
 <style>
