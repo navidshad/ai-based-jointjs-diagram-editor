@@ -1,19 +1,19 @@
 <template>
   <div class="split h-full">
-    <div id="split-0" class="overflow-y-scroll h-full relative">
-      <div class="flex justify-end border-b-2 border-t-2 fixed p-2 w-full bg-white z-10">
+    <div id="split-0" class="overflow-y-scroll h-full">
+      <ElementProperties v-if="selected != null" :item="selected" />
+    </div>
+
+    <div id="split-1" class="overflow-y-scroll h-full relative">
+      <div class="flex justify-end border-b-2 border-t-2 fixed bottom-0 p-2 w-full bg-white z-10">
         <v-btn variant="outlined" density="compact" id="add-custom-image" icon>
           <v-icon :size="16">mdi-image-plus-outline</v-icon>
           <add-custom-image-form activator="#add-custom-image" />
         </v-btn>
       </div>
-      <div class="mt-10">
+      <div class="mb-10">
         <hierarchy @selected="selected = $event" />
       </div>
-    </div>
-
-    <div id="split-1" class="overflow-y-scroll h-full">
-      <ElementProperties v-if="selected != null" :item="selected" />
     </div>
   </div>
 </template>
@@ -31,7 +31,7 @@ const selected = ref<HierarchyItem | null>(null)
 onMounted(() => {
   Split(['#split-0', '#split-1'], {
     direction: 'vertical',
-    sizes: [20, 80]
+    sizes: [70, 30]
   })
 })
 </script>

@@ -73,6 +73,7 @@ function setSize(wValue: string | number, hValue: string | number) {
           dense
           class="w-full"
         />
+
         <v-checkbox
           label="None Connectable with other elements"
           :model-value="item?.element.prop('data/noneConectable')"
