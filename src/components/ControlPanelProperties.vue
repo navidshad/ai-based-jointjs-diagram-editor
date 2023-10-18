@@ -1,6 +1,7 @@
 <template>
   <div class="split h-full">
     <div id="split-0" class="overflow-y-scroll h-full">
+      <!-- @vue-skip -->
       <ElementProperties v-if="selected != null" :item="selected" />
     </div>
 

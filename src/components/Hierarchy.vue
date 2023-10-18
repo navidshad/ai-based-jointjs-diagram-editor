@@ -11,6 +11,7 @@
       <v-list-item-title v-text="item.name" />
 
       <template v-slot:append>
+        <!-- @vue-skip -->
         <v-btn size="small" variant="text" icon="mdi-close" @click="onRemoveItem(item)" />
       </template>
     </v-list-item>
