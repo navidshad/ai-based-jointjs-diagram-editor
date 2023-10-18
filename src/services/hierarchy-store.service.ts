@@ -39,13 +39,13 @@ export class HierarchyStore {
     return this._data.find((item) => item.id == id)
   }
 
-  // remove(id: string) {
-  //   const index = this._data.findIndex((i) => i.id == id)
-  //   if (index == -1) return
+  remove(id: string) {
+    const index = this._data.findIndex((i) => i.id == id)
+    if (index == -1) return
 
-  //   const removed = this._data.splice(index, 1)
-  //   this._eventBus.emit('remove', removed[0])
-  // }
+    const removed = this._data.splice(index, 1)
+    this._eventBus.emit('remove', removed[0])
+  }
 
   addEvent(type: 'add' | 'remove' | 'select', callback: (item: HierarchyItem) => void) {
     this._eventBus.on(type, callback)

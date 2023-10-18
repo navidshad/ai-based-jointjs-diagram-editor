@@ -9,6 +9,10 @@
     >
       <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
       <v-list-item-title v-text="item.name" />
+
+      <template v-slot:append>
+        <v-btn size="small" variant="text" icon="mdi-close" @click="onRemoveItem(item)" />
+      </template>
     </v-list-item>
   </v-list>
 </template>
@@ -54,5 +58,10 @@ function activeItem(item: HierarchyItem | undefined | null) {
 function onItemAdded(item: HierarchyItem) {
   generateNewKey()
   activeItem(item)
+}
+
+function onRemoveItem(item: HierarchyItem) {
+  diagramStore.graph.removeCells([item.element])
+  diagramStore.hierarchyStore.remove(item.id)
 }
 </script>
