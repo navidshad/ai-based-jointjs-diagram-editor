@@ -16,7 +16,7 @@
         </v-btn>
       </div>
       <div class="mb-10">
-        <hierarchy @selected="selected = $event" />
+        <hierarchy @selected="onElementSelected" />
       </div>
     </div>
   </div>
@@ -38,6 +38,10 @@ onMounted(() => {
     sizes: [70, 30]
   })
 })
+
+function onElementSelected(item: HierarchyItem | null) {
+  selected.value = item
+}
 </script>
 
 <style>
