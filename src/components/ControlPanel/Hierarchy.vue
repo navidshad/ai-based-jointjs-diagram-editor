@@ -8,7 +8,7 @@
       :active="item.id == selected?.id"
     >
       <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
-      <v-list-item-title v-text="item.name" />
+      <v-list-item-title v-text="item.name || item.id" />
 
       <template v-slot:append>
         <!-- @vue-skip -->

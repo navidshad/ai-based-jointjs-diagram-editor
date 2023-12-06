@@ -98,7 +98,7 @@ function setSize(wValue: string | number, hValue: string | number) {
         <v-text-field label="Label" outlined dense class="w-full" v-model:model-value="label" />
 
         <v-checkbox
-          label="None Connectable with other elements"
+          label="Don't connect with other elements"
           :model-value="item?.element.prop('data/noneConectable')"
           @update:model-value="item?.element.prop('data/noneConectable', $event)"
         />
