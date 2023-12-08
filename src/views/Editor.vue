@@ -42,7 +42,7 @@
 import { inject, ref } from 'vue'
 import DiagramCanvas from '@/components/DiagramCanvas.vue'
 import ActionHeaderComponent from '@/components/ActionHeader.vue'
-import ControlPanelComponent from '@/components/ControlPanel.vue'
+import ControlPanelComponent from '@/components/ControlPanel/ControlPanel.vue'
 import { useConfigStore } from '@/stores/config'
 
 const configStore = useConfigStore()

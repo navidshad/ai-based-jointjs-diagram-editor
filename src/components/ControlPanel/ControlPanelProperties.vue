@@ -1,6 +1,7 @@
 <template>
   <div class="split h-full">
     <div id="split-0" class="overflow-y-scroll h-full">
+      <!-- @vue-skip -->
       <ElementProperties v-if="selected != null" :item="selected" />
     </div>
 
@@ -9,10 +10,13 @@
         <v-btn variant="outlined" density="compact" id="add-custom-image" icon>
           <v-icon :size="16">mdi-image-plus-outline</v-icon>
           <add-custom-image-form activator="#add-custom-image" />
+          <v-tooltip location="top center" activator="parent">
+            <span>Add Custome Image</span>
+          </v-tooltip>
         </v-btn>
       </div>
       <div class="mb-10">
-        <hierarchy @selected="selected = $event" />
+        <hierarchy @selected="onElementSelected" />
       </div>
     </div>
   </div>
@@ -34,6 +38,10 @@ onMounted(() => {
     sizes: [70, 30]
   })
 })
+
+function onElementSelected(item: HierarchyItem | null) {
+  selected.value = item
+}
 </script>
 
 <style>

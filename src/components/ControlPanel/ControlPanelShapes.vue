@@ -18,7 +18,7 @@
 import { shapes } from 'jointjs'
 import { defineComponent } from 'vue'
 
-import { resourcenames } from '../static/resource-names'
+import { resourcenames } from '@/static/resource-names'
 import { useDiagramStore } from '@/stores/diagram'
 
 export default defineComponent({

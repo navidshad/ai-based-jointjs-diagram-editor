@@ -7,7 +7,7 @@
       </v-tabs>
 
       <v-window class="flex-1 h-full" v-model="tab">
-        <v-window-item value="shapes" class="h-full">
+        <v-window-item value="shapes" class="h-full overflow-y-scroll">
           <control-panel-shapes />
         </v-window-item>
 
@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
-import { AdditionalPanel } from '../model/additional-panel.model'
+import { AdditionalPanel } from '@/model/additional-panel.model'
 import ControlPanelProperties from './ControlPanelProperties.vue'
 import ControlPanelShapes from './ControlPanelShapes.vue'
 

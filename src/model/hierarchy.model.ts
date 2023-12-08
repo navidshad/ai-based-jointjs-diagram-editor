@@ -35,7 +35,7 @@ export class HierarchyItem {
   }
 
   changeLabel(name: string) {
-    this.element.attr('label/text', this.name)
     this.name = name
+    this.element.attr('label/text', this.name)
   }
 }

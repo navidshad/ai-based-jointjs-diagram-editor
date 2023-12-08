@@ -54,7 +54,7 @@ function addCustomImage() {
         <div class="flex-1">
           <v-text-field label="Label" v-model:model-value="label" />
           <v-checkbox
-            label="None Connectable with other elements"
+            label="Don't connect with other elements"
             v-model:model-value="noneConectable"
           />
           <v-text-field label="Image URL" v-model:model-value="imageUrl" />
