@@ -113,10 +113,10 @@
 import { useDiagramStore } from '@/stores/diagram'
 import { type PrimitiveType, primitiveShapes } from '@/static/primitives-initial'
 import { ref } from 'vue'
-import { dia } from 'jointjs'
 
 const diagramStore = useDiagramStore()
 const selectedShape = ref<PrimitiveType | 'none'>('none')
+let isCreating = false
 let mouseStart = { x: 0, y: 0, id: '' }
 
 function onSelectShape(type: string) {
@@ -132,6 +132,10 @@ function onSelectShape(type: string) {
 }
 
 function onDragStart(event: DragEvent) {
+  if (isCreating) return
+
+  isCreating = true
+
   mouseStart = {
     x: event.offsetX,
     y: event.offsetY,
@@ -159,6 +163,8 @@ function onDragging(event: DragEvent) {
 }
 
 function onDragEnd(event: DragEvent) {
+  isCreating = false
+
   // @ts-ignore
   diagramStore.paper.off('blank:pointerdown', onDragStart)
   // @ts-ignore
