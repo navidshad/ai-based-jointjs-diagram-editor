@@ -35,7 +35,7 @@ export const useDiagramStore = defineStore('diagram', () => {
     paper.value = new dia.Paper(options)
   }
 
-  function inserDiagramData(data: Diagram | string) {
+  function insertDiagramData(data: Diagram | string) {
     if (typeof data == 'string') {
       data = JSON.parse(data)
     }
@@ -104,7 +104,7 @@ export const useDiagramStore = defineStore('diagram', () => {
     paper,
     hierarchyStore,
 
-    inserDiagramData,
+    insertDiagramData,
     addPaper,
     addElement,
     addStandardToolsViewsForElement,
