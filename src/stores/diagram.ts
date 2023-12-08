@@ -28,6 +28,7 @@ export const useDiagramStore = defineStore('diagram', () => {
       configStore.updateParentWindowWithGraph(graph.toJSON())
     }
   }
+
   //
   // End global graph events
 
@@ -62,6 +63,20 @@ export const useDiagramStore = defineStore('diagram', () => {
   function addElement(element: dia.Element) {
     element.addTo(graph)
     addStandardToolsViewsForElement(element)
+  }
+
+  function addElementFromJson(json: any) {
+    if (typeof json == 'string') {
+      json = JSON.parse(json)
+    }
+
+    if (json.id == null) {
+      json.id = new Date().getTime()
+    }
+
+    graph.addCell(json)
+    const cell = graph.getCell(json.id)
+    addStandardToolsViewsForElement(cell as dia.Element)
   }
 
   function addStandardToolsViewsForElement(element: dia.Element) {
@@ -107,6 +122,7 @@ export const useDiagramStore = defineStore('diagram', () => {
     insertDiagramData,
     addPaper,
     addElement,
+    addElementFromJson,
     addStandardToolsViewsForElement,
     addStandardToolsViewsForLink
   }
