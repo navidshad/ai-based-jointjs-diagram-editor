@@ -52,6 +52,13 @@ function setSize(wValue: string | number, hValue: string | number) {
   wValue = parseInt(wValue.toString())
   hValue = parseInt(hValue.toString())
   props.item?.element.size(wValue, hValue)
+
+  // activate wrap text
+  props.item?.element.attr('label/textWrap', {
+    width: wValue,
+    height: hValue,
+    ellipsis: true
+  })
 }
 </script>
 
