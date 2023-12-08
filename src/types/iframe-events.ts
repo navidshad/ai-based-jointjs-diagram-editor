@@ -1,6 +1,6 @@
 import type { dia } from 'jointjs'
 
-// To send/receive Grapgh data between the app and the parent window.
+// To send/receive Graph data between the app and the parent window.
 export interface GraphEvent {
   type: 'graph'
   payload: { cells: dia.Cell[] }

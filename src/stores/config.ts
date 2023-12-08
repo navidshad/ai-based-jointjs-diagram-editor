@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type { GraphEvent, Settings } from '@/types/ifram-events'
+import type { GraphEvent, Settings } from '@/types/iframe-events'
 import { clone } from '@/helpers/object'
 
 export const useConfigStore = defineStore('config', () => {
@@ -22,7 +22,7 @@ export const useConfigStore = defineStore('config', () => {
     window.parent.postMessage(event, '*')
   }
 
-  function insertSettins(settingsData: Settings) {
+  function insertSettings(settingsData: Settings) {
     settings.value = settingsData
   }
 
@@ -32,6 +32,6 @@ export const useConfigStore = defineStore('config', () => {
     updatePerChange,
 
     updateParentWindowWithGraph,
-    insertSettins
+    insertSettings
   }
 })

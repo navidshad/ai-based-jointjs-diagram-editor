@@ -40,7 +40,7 @@ export default {
 
   methods: {
     update() {
-      this.diagramStore.inserDiagramData(this.jsonContent)
+      this.diagramStore.insertDiagramData(this.jsonContent)
       this.$emit('close')
     }
   }

@@ -18,13 +18,13 @@
 import { shapes } from 'jointjs'
 import { defineComponent } from 'vue'
 
-import { resourcenames } from '@/static/resource-names'
+import { resourceNames } from '@/static/resource-names'
 import { useDiagramStore } from '@/stores/diagram'
 
 export default defineComponent({
   computed: {
     imgs() {
-      return resourcenames.split(',') || []
+      return resourceNames.split(',') || []
     }
   },
 

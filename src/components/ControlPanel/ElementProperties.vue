@@ -1,20 +1,24 @@
 <script setup lang="ts">
 import type { HierarchyItem } from '@/model/hierarchy.model'
-
-import { watch } from 'vue'
-import { ref } from 'vue'
+import { computed, watch, ref } from 'vue'
 
 const props = defineProps<{
   item: HierarchyItem | null
 }>()
 
 const label = ref('')
+const color = ref('')
+
+const isImage = computed(() => {
+  return props.item?.element.attr('image') != null
+})
 
 watch(
   () => props.item,
   (value: HierarchyItem | null) => {
     if (value) {
       label.value = props.item?.name as string
+      color.value = props.item?.element.attr('body/fill') as string
     }
   },
   { immediate: true, deep: true }
@@ -24,6 +28,12 @@ watch(
   () => label.value,
   (value: string) => {
     props.item?.changeLabel(value)
+  }
+)
+watch(
+  () => color.value,
+  (value: string) => {
+    props.item?.element.attr('body/fill', value)
   }
 )
 
@@ -47,6 +57,13 @@ function setSize(wValue: string | number, hValue: string | number) {
 
 <template>
   <div class="w-full" v-if="props.item != null">
+    <v-card variant="plain">
+      <!-- <v-card-title>Label</v-card-title> -->
+      <v-card-text>
+        <v-text-field label="Label" outlined dense class="w-full" v-model:model-value="label" />
+      </v-card-text>
+    </v-card>
+
     <v-card variant="plain">
       <v-card-title>Transform</v-card-title>
       <v-card-text>
@@ -89,19 +106,21 @@ function setSize(wValue: string | number, hValue: string | number) {
             disabled
           />
         </div>
-      </v-card-text>
-    </v-card>
-
-    <v-card variant="plain">
-      <v-card-title>Label</v-card-title>
-      <v-card-text>
-        <v-text-field label="Label" outlined dense class="w-full" v-model:model-value="label" />
 
         <v-checkbox
           label="Don't connect with other elements"
           :model-value="item?.element.prop('data/noneConectable')"
           @update:model-value="item?.element.prop('data/noneConectable', $event)"
         />
+      </v-card-text>
+    </v-card>
+
+    <v-card variant="plain" v-if="!isImage">
+      <v-card-title>Style</v-card-title>
+      <v-card-text>
+        <div class="w-full flex justify-center">
+          <v-color-picker elevation="0" v-model="color" mode="hexa"></v-color-picker>
+        </div>
       </v-card-text>
     </v-card>
 
