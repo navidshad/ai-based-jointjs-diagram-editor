@@ -11,8 +11,6 @@ window.onmessage = (event) => {
   // check if source and target is the same window
   if (event.source === window) return
 
-  console.log('Received event')
-
   try {
     if (eventData.type === 'graph') {
       const { payload } = eventData as GraphEvent
