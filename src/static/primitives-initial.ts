@@ -14,8 +14,7 @@ export const primitiveShapes: { [key: string]: any } = {
     angle: 0,
     attrs: {
       body: {
-        fill: '#30d0c6',
-        fillOpacity: 0.5
+        fill: '#30D0C659'
       },
       label: {
         text: 'Rectangle'
@@ -36,8 +35,7 @@ export const primitiveShapes: { [key: string]: any } = {
 
     attrs: {
       body: {
-        fill: '#30d0c6',
-        fillOpacity: 0.5
+        fill: '#30D0C659'
       },
       label: {
         text: 'Circle'
@@ -57,8 +55,7 @@ export const primitiveShapes: { [key: string]: any } = {
     },
     attrs: {
       body: {
-        fill: '#30d0c6',
-        fillOpacity: 0.5
+        fill: '#30D0C659'
       },
       label: {
         text: 'Ellipse'
