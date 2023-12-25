@@ -16,8 +16,10 @@ const imageUrl = ref<string>(
 const label = ref<string>('Change my label')
 const width = ref<number>(250)
 const height = ref<number>(250)
-const noneConectable = ref<boolean>(true)
+const noneConnectable = ref<boolean>(true)
 
+const formEl = ref<any | null>(null)
+const isFormValid = ref<boolean>(false)
 const imageEl = ref<HTMLImageElement | null>(null)
 
 onMounted(() => getImageSize())
@@ -30,6 +32,8 @@ function getImageSize() {
 }
 
 function addCustomImage() {
+  if (!isFormValid.value) return
+
   // Reject
   if (!imageUrl.value.length || width.value <= 0 || height.value <= 0) return
 
@@ -39,10 +43,22 @@ function addCustomImage() {
   imageElement.size(width.value, height.value)
   imageElement.attr('image/xlinkHref', imageUrl.value)
   imageElement.attr('label/text', label.value)
-  imageElement.prop('data/noneConectable', noneConectable.value)
+  imageElement.prop('data/noneConectable', noneConnectable.value)
   store.addElement(imageElement)
   toggle.value = false
 }
+
+const imageUrlRules = [
+  (v: string) => !!v || 'Image URL is required',
+  (v: string) => {
+    try {
+      const url = new URL(v)
+      return url.protocol === 'http:' || url.protocol === 'https:' || 'Use Https please.'
+    } catch (error) {
+      return 'Invalid URL'
+    }
+  }
+]
 </script>
 
 <template>
@@ -52,16 +68,18 @@ function addCustomImage() {
 
       <v-card-text class="flex space-x-2">
         <div class="flex-1">
-          <v-text-field label="Label" v-model:model-value="label" />
-          <v-checkbox
-            label="Don't connect with other elements"
-            v-model:model-value="noneConectable"
-          />
-          <v-text-field label="Image URL" v-model:model-value="imageUrl" />
-          <div class="flex space-x-2">
-            <v-text-field label="Width" v-model:model-value="width" type="number" />
-            <v-text-field label="Height" v-model:model-value="height" type="number" />
-          </div>
+          <v-form ref="formEl" validate-on="blur" v-model:model-value="isFormValid">
+            <v-text-field label="Label" v-model:model-value="label" />
+            <v-checkbox
+              label="Don't connect with other elements"
+              v-model:model-value="noneConnectable"
+            />
+            <v-text-field label="Image URL" v-model:model-value="imageUrl" :rules="imageUrlRules" />
+            <div class="flex space-x-2">
+              <v-text-field label="Width" v-model:model-value="width" type="number" />
+              <v-text-field label="Height" v-model:model-value="height" type="number" />
+            </div>
+          </v-form>
         </div>
         <!-- image preview -->
         <v-card
