@@ -43,7 +43,7 @@ function addCustomImage() {
   imageElement.size(width.value, height.value)
   imageElement.attr('image/xlinkHref', imageUrl.value)
   imageElement.attr('label/text', label.value)
-  imageElement.prop('data/noneConectable', noneConnectable.value)
+  imageElement.prop('data/noneConnectable', noneConnectable.value)
   store.addElement(imageElement)
   toggle.value = false
 }

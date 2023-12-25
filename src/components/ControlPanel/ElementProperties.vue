@@ -116,8 +116,8 @@ function setSize(wValue: string | number, hValue: string | number) {
 
         <v-checkbox
           label="Don't connect with other elements"
-          :model-value="item?.element.prop('data/noneConectable')"
-          @update:model-value="item?.element.prop('data/noneConectable', $event)"
+          :model-value="item?.element.prop('data/noneConnectable')"
+          @update:model-value="item?.element.prop('data/noneConnectable', $event)"
         />
       </v-card-text>
     </v-card>
