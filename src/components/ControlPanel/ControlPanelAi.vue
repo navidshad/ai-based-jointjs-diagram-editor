@@ -14,23 +14,35 @@
           @click:append-inner="improvePrompt"
         />
 
-        <v-btn
-          class="my-2"
-          block
-          variant="flat"
-          color="primary"
-          :disabled="isGeneratingDiagram || !isValidPrompt || !prompt.length"
-          :loading="isGeneratingDiagram"
-          @click="submit"
-          >Submit</v-btn
-        >
+        <div class="flex space-x-2">
+          <v-btn
+            class="flex-1"
+            variant="flat"
+            color="primary"
+            :disabled="isGeneratingDiagram || isEditingDiagram || !isValidPrompt || !prompt.length"
+            :loading="isGeneratingDiagram"
+            @click="generateByAi"
+            >Generate</v-btn
+          >
+
+          <v-btn
+            class="flex-1"
+            variant="flat"
+            color="primary"
+            :disabled="isEditingDiagram || isGeneratingDiagram || !isValidPrompt || !prompt.length"
+            :loading="isEditingDiagram"
+            @click="editByAi"
+            >Edit</v-btn
+          >
+        </div>
       </v-form>
     </v-card-text>
   </v-card>
 </template>
 
 <script setup lang="ts">
-import { manipulateDiagram } from '@/ai-chains/manipulation.chain'
+import { generateDiagram } from '@/ai-chains/diagram-generator.chain copy'
+import { manipulateDiagram } from '@/ai-chains/diagram-manipulation.chain'
 import { improviseBasePrompt } from '@/ai-chains/prompt-improviser.chain'
 import { useDiagramStore } from '@/stores/diagram'
 import type { Diagram } from '@/types/general'
@@ -39,6 +51,7 @@ import { ref } from 'vue'
 const diagramStore = useDiagramStore()
 
 const isGeneratingDiagram = ref(false)
+const isEditingDiagram = ref(false)
 const isImprovingPrompt = ref(false)
 
 const isValidPrompt = ref(true)
@@ -60,11 +73,11 @@ async function improvePrompt() {
     })
 }
 
-async function submit() {
+async function generateByAi() {
   isGeneratingDiagram.value = true
-  const diagramCells = JSON.stringify(diagramStore.graph.toJSON())
+  // const diagramCells = JSON.stringify(diagramStore.graph.toJSON())
 
-  await manipulateDiagram(prompt.value, diagramCells)
+  await generateDiagram(prompt.value)
     .then((res) => {
       console.log(res)
       diagramStore.insertDiagramData(res as Diagram)
@@ -73,4 +86,19 @@ async function submit() {
       isGeneratingDiagram.value = false
     })
 }
+
+async function editByAi() {
+  isEditingDiagram.value = true
+  const diagramCells = JSON.stringify(diagramStore.graph.toJSON())
+
+  await manipulateDiagram(prompt.value, diagramCells)
+    .then((res) => {
+      console.log(res)
+      diagramStore.insertDiagramData(res as Diagram)
+    })
+    .finally(() => {
+      isEditingDiagram.value = false
+    })
+}
 </script>
+@/ai-chains/diagram-manipulation.chain
