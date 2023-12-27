@@ -12,13 +12,13 @@
 </template>
 
 <script setup lang="ts">
-import { shapes, g } from 'jointjs'
+import { g } from 'jointjs'
 import 'jointjs/dist/joint.css'
 
 import PanComponent from './Pan.vue'
 
 import { type CustomElementView } from '@/types/general'
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeMount } from 'vue'
 
 import { useDiagramStore } from '@/stores/diagram'
 
@@ -53,7 +53,7 @@ const canvasSize = computed(() => {
 watch(props, () => diagramStore.paper?.setDimensions(props.width, props.height))
 
 // @ts-ignore
-onUnmounted(() => diagramStore.paper?.remove())
+onBeforeMount(() => diagramStore.paper?.remove())
 onMounted(() => initiateDiagram())
 
 function initiateDiagram() {

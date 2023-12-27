@@ -58,7 +58,8 @@ function generateNewKey() {
 function activeItem(item: HierarchyItem | undefined | null) {
   if (!item) return
 
-  selected.value = item
+  // @ TODO fix this
+  // selected.value = item
   diagramStore.hierarchyStore.activeItem(item)
   key.value = new Date().getTime()
 }
