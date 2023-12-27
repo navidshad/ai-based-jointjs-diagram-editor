@@ -54,9 +54,9 @@ watch(props, () => diagramStore.paper?.setDimensions(props.width, props.height))
 
 // @ts-ignore
 onUnmounted(() => diagramStore.paper?.remove())
-onMounted(() => intiateDiagram())
+onMounted(() => initiateDiagram())
 
-function intiateDiagram() {
+function initiateDiagram() {
   diagramStore.addPaper({
     el: editorEl.value,
     model: diagramStore.graph,
@@ -86,29 +86,29 @@ function intiateDiagram() {
     },
 
     'element:pointerup': function (view, evt, x, y) {
-      let coordinates = new g.Point(x, y)
+      const coordinates = new g.Point(x, y)
 
-      let sourceElementView = view as CustomElementView
-      let sourceElement = sourceElementView.model
+      const sourceElementView = view as CustomElementView
+      const sourceElement = sourceElementView.model
 
       // Ignore if the element is not connectable
       if (sourceElement.prop('data/noneConnectable') || false) return
 
       let destElementView = diagramStore.paper?.findViewsFromPoint(coordinates).find(function (el) {
         // @ts-ignore
-        const isNotSourceElemet = el.model.id !== sourceElement.id
+        const isNotSourceElement = el.model.id !== sourceElement.id
         // @ts-ignore
         const isNoneConnectable = el.model.prop('data/noneConnectable') || false
 
-        return isNotSourceElemet && !isNoneConnectable
+        return isNotSourceElement && !isNoneConnectable
       }) as CustomElementView
 
       if (!destElementView) return
 
       let destElement = destElementView.model
 
-      // If the two elements are connected already, don't
-      // connect them again (this is application-specific though).
+      // If the two elements are connected already,
+      // don't connect them again (this is application-specific though).
       if (
         destElement &&
         diagramStore.graph.getNeighbors(destElement).indexOf(sourceElement) === -1
@@ -117,12 +117,7 @@ function intiateDiagram() {
         sourceElement.position(evt.data.x, evt.data.y)
 
         // Create a connection between elements.
-        var link = new shapes.standard.Link()
-        link.source(sourceElement)
-        link.target(destElement)
-        link.addTo(diagramStore.graph)
-
-        diagramStore.addStandardToolsViewsForLink(link)
+        diagramStore.addLink(sourceElement, destElement)
       }
     }
   })

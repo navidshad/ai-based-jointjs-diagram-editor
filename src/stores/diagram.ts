@@ -65,6 +65,17 @@ export const useDiagramStore = defineStore('diagram', () => {
     addStandardToolsViewsForElement(element)
   }
 
+  function addLink(source: dia.Element, target: dia.Element) {
+    const link = new shapes.standard.Link()
+
+    link.source(source)
+    link.target(target)
+
+    link.addTo(graph)
+
+    addStandardToolsViewsForLink(link)
+  }
+
   function addElementFromJson(json: any) {
     if (typeof json == 'string') {
       json = JSON.parse(json)
@@ -127,6 +138,7 @@ export const useDiagramStore = defineStore('diagram', () => {
     hierarchyStore,
 
     insertDiagramData,
+    addLink,
     addPaper,
     addElement,
     addElementFromJson,
