@@ -5,6 +5,7 @@ import { dia, elementTools, linkTools, shapes } from 'jointjs'
 import { useConfigStore } from './config'
 import { HierarchyItem, ToolsViewItem } from '@/model/hierarchy.model'
 import { ref } from 'vue'
+import { sleep } from 'langchain/util/time'
 
 export const useDiagramStore = defineStore('diagram', () => {
   const hierarchyStore = new HierarchyStore()
@@ -73,7 +74,14 @@ export const useDiagramStore = defineStore('diagram', () => {
 
     link.addTo(graph)
 
-    addStandardToolsViewsForLink(link)
+    // @ TODO: Will be add after refresh, need to me removed when mentioned error resolved later.
+    // addStandardToolsViewsForLink(link)
+
+    // there is an error when Link added and wont be disappeared by this
+    // error: Illegal access. Moveto segments should not need a start property.
+    sleep(100).then(() => {
+      refreshGraph()
+    })
   }
 
   function addElementFromJson(json: any) {
@@ -130,6 +138,10 @@ export const useDiagramStore = defineStore('diagram', () => {
     })
 
     link.findView(paper.value as dia.Paper).addTools(tools)
+  }
+
+  function refreshGraph() {
+    insertDiagramData(graph.toJSON())
   }
 
   return {
