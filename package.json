@@ -14,7 +14,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "jointjs": "^3.7.5",
+    "jointjs": "3.7.7",
+    "langchain": "^0.0.212",
     "pinia": "^2.1.6",
     "split.js": "^1.6.5",
     "tiny-emitter": "^2.1.0",
