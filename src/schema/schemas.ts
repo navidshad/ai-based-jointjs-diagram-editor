@@ -1,3 +1,35 @@
+import { z } from 'zod'
+
+export type SimplifiedCellsType = {
+  cells: Array<{
+    title: string
+    position: {
+      x: number
+      y: number
+    }
+    connections: string[]
+  }>
+}
+
+export const simplifiedCellsSchema = z.object({
+  cells: z
+    .array(
+      z.object({
+        title: z.string().describe('Title of the cell.'),
+        position: z
+          .object({
+            x: z.number(),
+            y: z.number()
+          })
+          .describe('Position of the cell, consider 200 units gap'),
+        connections: z.array(
+          z.string().describe('Other cell titles that this cell is connected to.')
+        )
+      })
+    )
+    .describe('Array of cells.')
+})
+
 export const jointjsPrimitiveSchema = `{
 	"type": "object",
 	"properties": {
