@@ -1,7 +1,7 @@
 import { LLMChain } from 'langchain/chains'
 import { ChatPromptTemplate } from 'langchain/prompts'
-import { gpt4Model } from './openai.model'
-import { simplifiedCellsSchema, type SimplifiedCellsType } from '@/schema/schemas'
+import { gpt4Model } from '../llms/openai.llm'
+import { simplifiedCellsSchema, type SimplifiedCellsType } from '@/ai/schema/schemas'
 import zodToJsonSchema from 'zod-to-json-schema'
 import { dia, shapes } from 'jointjs'
 

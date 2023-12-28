@@ -41,9 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { generateDiagram } from '@/ai-chains/diagram-generator.chain copy'
-import { manipulateDiagram } from '@/ai-chains/diagram-manipulation.chain'
-import { improviseBasePrompt } from '@/ai-chains/prompt-improviser.chain'
+import { generateDiagram, manipulateDiagram, improviseBasePrompt } from '@/ai'
 import { useDiagramStore } from '@/stores/diagram'
 import type { Diagram } from '@/types/general'
 import { ref } from 'vue'

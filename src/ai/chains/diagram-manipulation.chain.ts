@@ -1,7 +1,7 @@
 import { LLMChain } from 'langchain/chains'
 import { ChatPromptTemplate } from 'langchain/prompts'
-import { gpt4Model } from './openai.model'
-import { jointjsPrimitiveSchema } from '@/schema/schemas'
+import { gpt4Model } from '../llms/openai.llm'
+import { jointjsPrimitiveSchema } from '@/ai/schema/schemas'
 
 const chatTemplate = ChatPromptTemplate.fromMessages([
   [

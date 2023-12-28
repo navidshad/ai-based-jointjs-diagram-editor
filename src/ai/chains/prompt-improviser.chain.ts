@@ -1,6 +1,6 @@
 import { LLMChain } from 'langchain/chains'
 import { ChatPromptTemplate } from 'langchain/prompts'
-import { gpt4Model } from './openai.model'
+import { gpt4Model } from '../llms/openai.llm'
 
 const chatTemplate = ChatPromptTemplate.fromMessages([
   [
