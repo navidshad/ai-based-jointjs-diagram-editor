@@ -22,8 +22,9 @@
             :disabled="isGeneratingDiagram || isEditingDiagram || !isValidPrompt || !prompt.length"
             :loading="isGeneratingDiagram"
             @click="generateByAi"
-            >Generate</v-btn
           >
+            Generate
+          </v-btn>
 
           <v-btn
             class="flex-1"
@@ -32,8 +33,9 @@
             :disabled="isEditingDiagram || isGeneratingDiagram || !isValidPrompt || !prompt.length"
             :loading="isEditingDiagram"
             @click="editByAi"
-            >Edit</v-btn
           >
+            Edit
+          </v-btn>
         </div>
       </v-form>
     </v-card-text>
@@ -73,11 +75,9 @@ async function improvePrompt() {
 
 async function generateByAi() {
   isGeneratingDiagram.value = true
-  // const diagramCells = JSON.stringify(diagramStore.graph.toJSON())
 
   await generateDiagram(prompt.value)
     .then((res) => {
-      console.log(res)
       diagramStore.insertDiagramData(res as Diagram)
     })
     .finally(() => {
@@ -91,7 +91,6 @@ async function editByAi() {
 
   await manipulateDiagram(prompt.value, diagramCells)
     .then((res) => {
-      console.log(res)
       diagramStore.insertDiagramData(res as Diagram)
     })
     .finally(() => {
@@ -99,4 +98,3 @@ async function editByAi() {
     })
 }
 </script>
-@/ai-chains/diagram-manipulation.chain

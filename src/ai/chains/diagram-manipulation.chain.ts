@@ -2,6 +2,7 @@ import { LLMChain } from 'langchain/chains'
 import { ChatPromptTemplate } from 'langchain/prompts'
 import { gpt4Model } from '../llms/openai.llm'
 import { jointjsPrimitiveSchema } from '@/ai/schema/schemas'
+import { extractJson } from '../helpers/json'
 
 const chatTemplate = ChatPromptTemplate.fromMessages([
   [
@@ -29,20 +30,6 @@ const chatTemplate = ChatPromptTemplate.fromMessages([
 ])
 
 export const manipulationChain = new LLMChain({ llm: gpt4Model, prompt: chatTemplate })
-
-function extractJson(text: string): { [key: string]: any } {
-  // Extract json part of given text
-  const jsonStart = text.indexOf('{')
-  const jsonEnd = text.lastIndexOf('}')
-  const json = text.substring(jsonStart, jsonEnd + 1)
-
-  try {
-    return JSON.parse(json)
-  } catch (error) {
-    console.error('Error parsing json', text)
-    return {}
-  }
-}
 
 export function manipulateDiagram(description: string, jsonCells: string) {
   return manipulationChain

@@ -5,6 +5,6 @@
     }
   ],
   "settings": {
-    "cSpell.words": ["jointjs", "langchain", "openai"]
+    "cSpell.words": ["jointjs", "langchain", "llms", "openai"]
   }
 }
