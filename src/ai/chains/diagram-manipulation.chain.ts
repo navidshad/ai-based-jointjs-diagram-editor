@@ -1,42 +1,39 @@
 import { LLMChain } from 'langchain/chains'
 import { ChatPromptTemplate } from 'langchain/prompts'
 import { gpt4Model } from '../llms/openai.llm'
-import { jointjsPrimitiveSchema } from '@/ai/schema/schemas'
+import { simplifiedCellsSchema, type SimplifiedCellsType } from '@/ai/schema/schemas'
 import { extractJson } from '../helpers/json'
+import zodToJsonSchema from 'zod-to-json-schema'
+import {
+  mapJointJsToSimplifiedCellsSchema,
+  mapSimplifiedCellsSchemaToJointJs
+} from '../helpers/jointjs'
+import type { dia } from 'jointjs'
 
 const chatTemplate = ChatPromptTemplate.fromMessages([
   [
     'system',
-    'you are a Jointjs diagram editor. take the given change request and the Jointjs JSON cells, then manipulate the diagram based on the description.'
-  ],
-  ['user', 'This is the change request:{diagram_description}'],
-  ['user', 'This is the Jointjs JSON cells:{json_cells}'],
-  [
-    'user',
     `
-  		  Consider the following Jointjs rules:
-        - each node type is either 'standard.Rectangle' or 'standard.Link'.
-  		  - each node has a title and id.
-  		  - each node has a position and size.
-        - consider color for each node, if they don't have color.
-  		  - each node type is either 'standard.Rectangle' or 'standard.Link'.
-        - this is the Jointjs node schema: {element_schema}
-        `
-    // - create link between if needed.
-    // - use this Jointjs node schema: {element_schema}
-    // - use this Jointjs link schema: {link_schema}
+      You able to change the diagram based the given description. 
+      take the given change description and the cells array, 
+      then manipulate the diagram based on the description according to the given schema.
+    `
   ],
+  ['user', 'This is the change description:{diagram_description}'],
+  ['user', 'This is the cells array:{json_cells}'],
+  ['user', 'Schema:{schema}'],
   ['system', 'JSON result is:']
 ])
 
 export const manipulationChain = new LLMChain({ llm: gpt4Model, prompt: chatTemplate })
 
-export function manipulateDiagram(description: string, jsonCells: string) {
+export function manipulateDiagram(description: string, cells: dia.Cell[]) {
   return manipulationChain
     .invoke({
       diagram_description: description,
-      json_cells: jsonCells,
-      element_schema: jointjsPrimitiveSchema
+      json_cells: JSON.stringify(mapJointJsToSimplifiedCellsSchema(cells)),
+      schema: JSON.stringify(zodToJsonSchema(simplifiedCellsSchema))
     })
-    .then(({ text }) => extractJson(text))
+    .then(({ text }) => extractJson(text) as SimplifiedCellsType)
+    .then((data) => mapSimplifiedCellsSchemaToJointJs(data))
 }

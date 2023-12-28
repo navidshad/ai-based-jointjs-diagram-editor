@@ -18,15 +18,16 @@
           <v-btn
             class="flex-1"
             variant="flat"
-            color="primary"
+            :color="isEditingDiagramAllowed() ? '' : 'primary'"
             :disabled="isGeneratingDiagram || isEditingDiagram || !isValidPrompt || !prompt.length"
             :loading="isGeneratingDiagram"
             @click="generateByAi"
           >
-            Generate
+            Generate New
           </v-btn>
 
           <v-btn
+            v-if="isEditingDiagramAllowed()"
             class="flex-1"
             variant="flat"
             color="primary"
@@ -46,6 +47,7 @@
 import { generateDiagram, manipulateDiagram, improviseBasePrompt } from '@/ai'
 import { useDiagramStore } from '@/stores/diagram'
 import type { Diagram } from '@/types/general'
+
 import { ref } from 'vue'
 
 const diagramStore = useDiagramStore()
@@ -60,6 +62,10 @@ const promptRules = [
   (v: string) => !!v || 'Prompt is required',
   (v: string) => v.length <= 20000 || 'Prompt must be less than 2000 characters'
 ]
+
+function isEditingDiagramAllowed() {
+  return diagramStore.hierarchyStore.data.length
+}
 
 async function improvePrompt() {
   isImprovingPrompt.value = true
@@ -87,7 +93,7 @@ async function generateByAi() {
 
 async function editByAi() {
   isEditingDiagram.value = true
-  const diagramCells = JSON.stringify(diagramStore.graph.toJSON())
+  const diagramCells = diagramStore.graph.getCells()
 
   await manipulateDiagram(prompt.value, diagramCells)
     .then((res) => {

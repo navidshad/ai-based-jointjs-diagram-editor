@@ -1,6 +1,56 @@
 import { shapes, type dia } from 'jointjs'
 import type { SimplifiedCellsType } from '../schema/schemas'
 
+// This function maps the jointjs cells to a simplified schema
+// This schema is used to for ai related functions
+export function mapJointJsToSimplifiedCellsSchema(cells: Array<dia.Cell>) {
+  const simplifiedCells: SimplifiedCellsType = {
+    cells: []
+  }
+
+  cells.forEach((cell) => {
+    if (cell.isElement()) {
+      const position = cell.position()
+      const title = cell.attr('label/text')
+
+      simplifiedCells.cells.push({
+        title,
+        position: {
+          x: position.x,
+          y: position.y
+        },
+        connections: []
+      })
+    }
+  })
+
+  cells.forEach((cell) => {
+    if (cell.isLink()) {
+      const source = cell.getSourceElement()
+      const target = cell.getTargetElement()
+
+      if (source && target) {
+        const sourceTitle = source.attr('label/text')
+        const targetTitle = target.attr('label/text')
+
+        const sourceCell = simplifiedCells.cells.find(
+          (simpleCell) => simpleCell.title === sourceTitle
+        )
+        const targetCell = simplifiedCells.cells.find(
+          (simpleCell) => simpleCell.title === targetTitle
+        )
+
+        if (sourceCell && targetCell) {
+          sourceCell.connections.push(targetCell.title)
+        }
+      }
+    }
+  })
+
+  return simplifiedCells
+}
+
+// This function maps the simplified schema to jointjs cells
 export function mapSimplifiedCellsSchemaToJointJs(data: SimplifiedCellsType) {
   const cells: Array<dia.Cell> = []
 
