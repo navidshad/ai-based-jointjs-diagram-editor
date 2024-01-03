@@ -18,7 +18,7 @@ const chatTemplate = ChatPromptTemplate.fromMessages([
 
       Consideration:
         1. Consider One way Flow for connections.
-        2. Consider 150 units gapes for positioning.
+        2. Consider 200 units gapes for positioning.
     `
   ],
   ['user', 'Description:{diagram_description}'],

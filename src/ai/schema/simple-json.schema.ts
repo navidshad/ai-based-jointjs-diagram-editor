@@ -111,7 +111,16 @@ export function mapSimplifiedCellsSchemaToJointJs(data: SimplifiedCellsType) {
       },
       label: {
         text: simpleCell.title,
-        fill: '#000000'
+        fill: '#000000',
+        textWrap: {
+          width: -10, // Negative value for padding from the rectangle's width
+          height: 'auto', // 'auto' to automatically adjust height
+          ellipsis: true // Add an ellipsis if the text is too long
+        },
+        textVerticalAnchor: 'middle', // Vertically center the text
+        textAnchor: 'middle', // Horizontally center the text
+        refX: '50%', // Center with respect to the rectangle's width
+        refY: '50%' // Center with respect to the rectangle's height
       },
       data: {
         groups: simpleCell.groups
@@ -162,7 +171,7 @@ export function extractAndCreateGroups(cells: Array<dia.Cell>) {
 
   // Create groups
   groups.forEach((group) => {
-    const boundary = getCellsBoundary(group.cells, 10)
+    const boundary = getCellsBoundary(group.cells, 20)
     const rect = new shapes.standard.Rectangle()
 
     rect.position(boundary.x, boundary.y)
@@ -184,7 +193,8 @@ export function extractAndCreateGroups(cells: Array<dia.Cell>) {
         refY2: 10 // Additional offset from the bottom of the rectangle
       },
       data: {
-        type: 'group'
+        type: 'group',
+        noneConnectable: true
       }
     })
 
