@@ -45,12 +45,14 @@ onBeforeMount(() => {
   diagramStore.paper?.remove()
 
   window.removeEventListener('mousemove', updateMousePosition)
+  window.removeEventListener('wheel', diagramStore.handleMouseWheel)
 })
 
 onMounted(() => {
   initiateDiagram()
 
   window.addEventListener('mousemove', updateMousePosition)
+  window.addEventListener('wheel', diagramStore.handleMouseWheel)
 })
 
 function updateMousePosition(event: MouseEvent) {

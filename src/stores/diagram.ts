@@ -32,8 +32,8 @@ export const useDiagramStore = defineStore('diagram', () => {
       configStore.updateParentWindowWithGraph(graph.toJSON())
     }
   }
-  //
   // End global graph events
+  //
 
   //
   // Data Insertion
@@ -153,27 +153,32 @@ export const useDiagramStore = defineStore('diagram', () => {
     paper.value.translate(tx + x, ty + y)
   }
 
-  // Method to zoom into the diagram
-  function zoomIn() {
-    // Get the current scale of the paper
-    const currentScale = paper.value.scale()
-    // Increase both x and y scale factors by 10% for zooming in
-    paper.value.scale(currentScale.sx * 1.1, currentScale.sy * 1.1)
-  }
-
-  // Method to zoom out of the diagram
-  function zoomOut() {
-    // Get the current scale of the paper
-    const currentScale = paper.value.scale()
-    // Decrease both x and y scale factors by 10% for zooming out
-    paper.value.scale(currentScale.sx * 0.9, currentScale.sy * 0.9)
-  }
-
   // Method to set a specific zoom level
   function setZoomLevel(zoomLevel: number) {
     // Set both x and y scale factors to the specified zoom level
     paper.value.scale(zoomLevel, zoomLevel)
   }
+
+  function handleMouseWheel(event: WheelEvent) {
+    event.preventDefault() // Prevent default scrolling behavior
+
+    const currentScale = paper.value.scale() // Get the current scale
+    const zoomFactor = 0.1 // Define how much to zoom in or out
+    let newScale = 0
+
+    if (event.deltaY < 0) {
+      // Mouse wheel moved up, zoom in
+      newScale = Math.min(currentScale.sx + zoomFactor, 20) // Set a max zoom limit
+    } else {
+      // Mouse wheel moved down, zoom out
+      newScale = Math.max(currentScale.sx - zoomFactor, 0.1) // Set a min zoom limit
+    }
+
+    // Apply the new scale
+    paper.value.scale(newScale, newScale)
+  }
+  // End of Viewport controller methods
+  //
 
   return {
     graph,
@@ -189,9 +194,8 @@ export const useDiagramStore = defineStore('diagram', () => {
     addStandardToolsViewsForLink,
 
     setViewportPosition,
-    zoomIn,
-    zoomOut,
     setZoomLevel,
-    isViewPortLocked
+    isViewPortLocked,
+    handleMouseWheel
   }
 })
