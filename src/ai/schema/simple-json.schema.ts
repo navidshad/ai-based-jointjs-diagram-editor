@@ -49,17 +49,21 @@ export function mapJointJsToSimplifiedCellsSchema(cells: Array<dia.Cell>) {
   }
 
   cells.forEach((cell) => {
-    if (cell.isElement()) {
+    const isGroup = cell.attr('data/type') === 'group'
+
+    if (cell.isElement() && !isGroup) {
       const position = cell.position()
       const title = cell.attr('label/text')
 
       simplifiedCells.cells.push({
         title,
+        color: cell.attr('body/fill'),
         position: {
           x: position.x,
           y: position.y
         },
-        connections: []
+        connections: [],
+        groups: cell.attr('data/groups') || []
       })
     }
   })
