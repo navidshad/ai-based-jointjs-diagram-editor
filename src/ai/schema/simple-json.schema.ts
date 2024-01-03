@@ -1,5 +1,6 @@
 import { shapes, type dia } from 'jointjs'
 import { z } from 'zod'
+import { getCellsBoundary } from '../helpers/jointjs'
 
 export type SimplifiedCellsType = {
   cells: Array<{
@@ -10,7 +11,13 @@ export type SimplifiedCellsType = {
       y: number
     }
     connections: string[]
+    groups: string[]
   }>
+}
+
+export type CellGroupType = {
+  cells: Array<dia.Cell>
+  title: string
 }
 
 export const simplifiedCellsSchema = z.object({
@@ -27,7 +34,8 @@ export const simplifiedCellsSchema = z.object({
           .describe('Position of the cell, consider 200 units gap'),
         connections: z.array(
           z.string().describe('Other cell titles that this cell is connected to.')
-        )
+        ),
+        groups: z.array(z.string().describe('Any group that this cell is grouped with.'))
       })
     )
     .describe('Array of cells.')
@@ -86,8 +94,6 @@ export function mapJointJsToSimplifiedCellsSchema(cells: Array<dia.Cell>) {
 export function mapSimplifiedCellsSchemaToJointJs(data: SimplifiedCellsType) {
   const cells: Array<dia.Cell> = []
 
-  console.log('Start PostProcess for:', JSON.stringify(data))
-
   // Create cells
   data.cells.forEach((simpleCell) => {
     const cell = new shapes.standard.Rectangle()
@@ -102,6 +108,9 @@ export function mapSimplifiedCellsSchemaToJointJs(data: SimplifiedCellsType) {
       label: {
         text: simpleCell.title,
         fill: '#000000'
+      },
+      data: {
+        groups: simpleCell.groups
       }
     })
 
@@ -121,6 +130,63 @@ export function mapSimplifiedCellsSchemaToJointJs(data: SimplifiedCellsType) {
         cells.push(link)
       }
     })
+  })
+
+  return { cells }
+}
+
+export function extractAndCreateGroups(cells: Array<dia.Cell>) {
+  const groups: Array<CellGroupType> = []
+
+  // Retrieve groups
+  cells.forEach((cell) => {
+    const cellGroups = cell.attr('data/groups')
+    if (cellGroups) {
+      cellGroups.forEach((groupTitle: string) => {
+        const groupCells = groups.find((group) => group.title === groupTitle)
+        if (groupCells) {
+          groupCells.cells.push(cell)
+        } else {
+          groups.push({
+            title: groupTitle,
+            cells: [cell]
+          })
+        }
+      })
+    }
+  })
+
+  // Create groups
+  groups.forEach((group) => {
+    const boundary = getCellsBoundary(group.cells, 10)
+    const rect = new shapes.standard.Rectangle()
+
+    rect.position(boundary.x, boundary.y)
+    rect.resize(boundary.width, boundary.height)
+
+    rect.attr({
+      body: {
+        // fill: 'white',
+        stroke: 'gray', // Color of the border
+        strokeWidth: 2, // Width of the border
+        strokeDasharray: '8,10' // Dash pattern (10px dash, 5px space)
+      },
+      label: {
+        text: group.title,
+        // fill: '#000000',
+        textVerticalAnchor: 'top', // Aligns the text at the top of the label box
+        textAnchor: 'middle', // Center aligns the text horizontally
+        refY: '100%', // Positions the label box just below the rectangle
+        refY2: 10 // Additional offset from the bottom of the rectangle
+      },
+      data: {
+        type: 'group'
+      }
+    })
+
+    if (group.cells.length > 1) {
+      cells = [rect, ...cells]
+    }
   })
 
   return { cells }

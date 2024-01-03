@@ -1,6 +1,3 @@
-import { shapes, type dia } from 'jointjs'
-import type { SimplifiedCellsType } from './simple-json.schema'
-
 export const simplifiedCellsCSVSchema = `
 1. Header Row Description:
    - title: A text string representing the name or title of an item.
@@ -75,6 +72,8 @@ export function mapCSVToSimplified(csv: string) {
       ? row.connections.split(';').map((connection) => connection.trim())
       : []
 
+    const groups = row.groups ? row.groups.split(';').map((group) => group.trim()) : []
+
     // if has all columns
     const rowKeys = Object.keys(row)
     const hasAll = columns.every((column) => rowKeys.includes(column))
@@ -90,7 +89,8 @@ export function mapCSVToSimplified(csv: string) {
         x: Number(row['position.x']),
         y: Number(row['position.y'])
       },
-      connections
+      connections,
+      groups
     })
   }
 

@@ -3,7 +3,10 @@ import { ChatPromptTemplate } from 'langchain/prompts'
 import { gpt4Model } from '../llms/openai.llm'
 
 import { mapCSVToSimplified, simplifiedCellsCSVSchema } from '../schema/csv.schema'
-import { mapSimplifiedCellsSchemaToJointJs } from '../schema/simple-json.schema'
+import {
+  extractAndCreateGroups,
+  mapSimplifiedCellsSchemaToJointJs
+} from '../schema/simple-json.schema'
 
 const chatTemplate = ChatPromptTemplate.fromMessages([
   [
@@ -33,4 +36,5 @@ export function generateDiagramWithCSV(description: string) {
     .then(({ text }) => text)
     .then((data) => mapCSVToSimplified(data))
     .then((data) => mapSimplifiedCellsSchemaToJointJs(data))
+    .then((data) => extractAndCreateGroups(data.cells))
 }
