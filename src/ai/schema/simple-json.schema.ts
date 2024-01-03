@@ -49,7 +49,7 @@ export function mapJointJsToSimplifiedCellsSchema(cells: Array<dia.Cell>) {
   }
 
   cells.forEach((cell) => {
-    const isGroup = cell.attr('data/type') === 'group'
+    const isGroup = cell.prop('data/type') === 'group'
 
     if (cell.isElement() && !isGroup) {
       const position = cell.position()
@@ -191,11 +191,12 @@ export function extractAndCreateGroups(cells: Array<dia.Cell>) {
         textAnchor: 'middle', // Center aligns the text horizontally
         refY: '100%', // Positions the label box just below the rectangle
         refY2: 10 // Additional offset from the bottom of the rectangle
-      },
-      data: {
-        type: 'group',
-        noneConnectable: true
       }
+    })
+
+    rect.prop('data', {
+      type: 'group',
+      noneConnectable: true
     })
 
     if (group.cells.length > 1) {
