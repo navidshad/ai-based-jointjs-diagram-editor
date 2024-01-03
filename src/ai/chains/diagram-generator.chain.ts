@@ -1,20 +1,24 @@
 import { LLMChain } from 'langchain/chains'
 import { ChatPromptTemplate } from 'langchain/prompts'
 import { gpt4Model } from '../llms/openai.llm'
-import { simplifiedCellsSchema, type SimplifiedCellsType } from '@/ai/schema/schemas'
-import zodToJsonSchema from 'zod-to-json-schema'
 import { extractJson } from '../helpers/json'
-import { mapSimplifiedCellsSchemaToJointJs } from '../helpers/jointjs'
+import {
+  mapSimplifiedCellsSchemaToJointJs,
+  simplifiedCellsSchema,
+  type SimplifiedCellsType
+} from '../schema/simple-json.schema'
+import zodToJsonSchema from 'zod-to-json-schema'
 
 const chatTemplate = ChatPromptTemplate.fromMessages([
   [
     'system',
     `
-      You able to assume diagram based the given description, 
+      Consider yourself a Unified Modeling Language expert who is able to assume diagram based the given description, 
       and return the node title, position, and connections according to the given schema.
 
       Consideration:
-        1. connect each node with next or prevues node only.
+        1. Consider One way Flow for connections.
+        2. Consider 150 units gapes for positioning.
     `
   ],
   ['user', 'Description:{diagram_description}'],
@@ -24,7 +28,7 @@ const chatTemplate = ChatPromptTemplate.fromMessages([
 
 export const manipulationChain = new LLMChain({ llm: gpt4Model, prompt: chatTemplate })
 
-export function generateDiagram(description: string) {
+export function generateDiagramWithSimplifiedJSON(description: string) {
   return manipulationChain
     .invoke({
       diagram_description: description,

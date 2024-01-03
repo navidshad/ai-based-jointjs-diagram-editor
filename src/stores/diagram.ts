@@ -56,6 +56,8 @@ export const useDiagramStore = defineStore('diagram', () => {
       console.error('Error while parsing diagram data', error)
     }
 
+    paper.value.fitToContent({ padding: 50 })
+
     // Update parent window with graph
     useConfigStore().updateParentWindowWithGraph(data as Diagram)
   }

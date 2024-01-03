@@ -1,14 +1,18 @@
 import { LLMChain } from 'langchain/chains'
 import { ChatPromptTemplate } from 'langchain/prompts'
 import { gpt4Model } from '../llms/openai.llm'
-import { simplifiedCellsSchema, type SimplifiedCellsType } from '@/ai/schema/schemas'
+
 import { extractJson } from '../helpers/json'
 import zodToJsonSchema from 'zod-to-json-schema'
+
+import type { dia } from 'jointjs'
+
 import {
   mapJointJsToSimplifiedCellsSchema,
-  mapSimplifiedCellsSchemaToJointJs
-} from '../helpers/jointjs'
-import type { dia } from 'jointjs'
+  mapSimplifiedCellsSchemaToJointJs,
+  simplifiedCellsSchema,
+  type SimplifiedCellsType
+} from '../schema/simple-json.schema'
 
 const chatTemplate = ChatPromptTemplate.fromMessages([
   [

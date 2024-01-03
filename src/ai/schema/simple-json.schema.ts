@@ -1,5 +1,35 @@
 import { shapes, type dia } from 'jointjs'
-import type { SimplifiedCellsType } from '../schema/schemas'
+import { z } from 'zod'
+
+export type SimplifiedCellsType = {
+  cells: Array<{
+    title: string
+    position: {
+      x: number
+      y: number
+    }
+    connections: string[]
+  }>
+}
+
+export const simplifiedCellsSchema = z.object({
+  cells: z
+    .array(
+      z.object({
+        title: z.string().describe('Title of the cell.'),
+        position: z
+          .object({
+            x: z.number(),
+            y: z.number()
+          })
+          .describe('Position of the cell, consider 200 units gap'),
+        connections: z.array(
+          z.string().describe('Other cell titles that this cell is connected to.')
+        )
+      })
+    )
+    .describe('Array of cells.')
+})
 
 // This function maps the jointjs cells to a simplified schema
 // This schema is used to for ai related functions
@@ -53,6 +83,8 @@ export function mapJointJsToSimplifiedCellsSchema(cells: Array<dia.Cell>) {
 // This function maps the simplified schema to jointjs cells
 export function mapSimplifiedCellsSchemaToJointJs(data: SimplifiedCellsType) {
   const cells: Array<dia.Cell> = []
+
+  console.log('Start PostProcess for:', JSON.stringify(data))
 
   // Create cells
   data.cells.forEach((simpleCell) => {

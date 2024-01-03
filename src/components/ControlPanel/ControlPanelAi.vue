@@ -44,7 +44,12 @@
 </template>
 
 <script setup lang="ts">
-import { generateDiagram, manipulateDiagram, improviseBasePrompt } from '@/ai'
+import {
+  generateDiagramWithSimplifiedJSON,
+  manipulateDiagram,
+  improviseBasePrompt,
+  generateDiagramWithCSV
+} from '@/ai'
 import { useDiagramStore } from '@/stores/diagram'
 import type { Diagram } from '@/types/general'
 
@@ -82,9 +87,9 @@ async function improvePrompt() {
 async function generateByAi() {
   isGeneratingDiagram.value = true
 
-  await generateDiagram(prompt.value)
+  await generateDiagramWithCSV(prompt.value)
     .then((res) => {
-      diagramStore.insertDiagramData(res as Diagram)
+      diagramStore.insertDiagramData(res as any)
     })
     .finally(() => {
       isGeneratingDiagram.value = false
