@@ -1,3 +1,6 @@
+import { shapes, type dia } from 'jointjs'
+import type { SimplifiedCellsType } from './simple-json.schema'
+
 export const simplifiedCellsCSVSchema = `
 1. Header Row Description:
    - title: A text string representing the name or title of an item.

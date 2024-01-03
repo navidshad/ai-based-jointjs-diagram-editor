@@ -4,6 +4,7 @@ import { z } from 'zod'
 export type SimplifiedCellsType = {
   cells: Array<{
     title: string
+    color: string
     position: {
       x: number
       y: number
@@ -17,6 +18,7 @@ export const simplifiedCellsSchema = z.object({
     .array(
       z.object({
         title: z.string().describe('Title of the cell.'),
+        color: z.string().optional().describe('Color of the cell.'),
         position: z
           .object({
             x: z.number(),
@@ -94,7 +96,7 @@ export function mapSimplifiedCellsSchemaToJointJs(data: SimplifiedCellsType) {
     cell.resize(100, 100)
     cell.attr({
       body: {
-        fill: '#2ECC71',
+        fill: simpleCell.color || '#2ECC71',
         fillOpacity: 0.5
       },
       label: {
