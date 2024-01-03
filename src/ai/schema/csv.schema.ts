@@ -30,6 +30,15 @@ export const simplifiedCellsCSVSchema = `
    - Verify that the connections field correctly splits into an array of strings.
    - Verify that the groups field correctly splits into an array of strings.
 `
+function cleanString(str: string) {
+  const list = ['"', '/', '\\', '\n', '\r']
+
+  for (const item of list) {
+    str = str.replace(item, '')
+  }
+
+  return str
+}
 
 export function parseCSV(csv: string) {
   const lines = csv.split('\n')
@@ -38,12 +47,8 @@ export function parseCSV(csv: string) {
   const result = data.map((row) => {
     const obj: Record<string, string> = {}
     row.forEach((value, index) => {
-      if (value.startsWith('"')) {
-        value = value.slice(1, -1)
-      }
-      if (value.endsWith('"')) {
-        value = value.slice(0, -1)
-      }
+      value = cleanString(value)
+      header[index] = cleanString(header[index])
 
       obj[header[index].trim()] = value.trim()
     })
@@ -70,7 +75,10 @@ export function mapCSVToSimplified(csv: string) {
     // if has all columns
     const rowKeys = Object.keys(row)
     const hasAll = columns.every((column) => rowKeys.includes(column))
-    if (!hasAll) continue
+    if (!hasAll) {
+      debugger
+      continue
+    }
 
     cells.push({
       title: row.title,
