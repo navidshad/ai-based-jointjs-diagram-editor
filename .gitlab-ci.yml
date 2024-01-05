@@ -16,8 +16,8 @@ pages:
     paths:
       - node_modules/
   script:
-    - echo $OPENAI_API_KEY > .env
-    - echo $OPENAI_ORG_ID >> .env
+    - echo "VITE_OPENAI_API_KEY=$OPENAI_API_KEY" > .env
+    - echo "VITE_OPENAI_ORG_ID$OPENAI_ORG_ID" >> .env
     - yarn install
     - yarn build
     - cp -a dist/. public

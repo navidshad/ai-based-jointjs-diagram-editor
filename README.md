@@ -27,15 +27,15 @@ This a Jointjs Diagram Editor that generates json base diagrams, then you can us
 - [x] Edit Shape properties.
 - [x] Add custom images.
 - [x] Import/Export json data.
-- [ ] Group a sort of elements.
-- [ ] Create and Manipulate Diagram by prompting.
+- [x] Create and Manipulate Diagram by GPT-4.
+- [ ] Group a sort of elements (only in ai result for now).
 
 ## Ifram & Communication
-This Editor is being used by few other KodeKloud designer apps like Qize-Designer through an iframe, they talk to each other using `message` event. so if you want to use this editor in your application, you need to use it in an iframe and communicate with it using `message` event. the data structure of the message is as follow:
+This Editor is being used by few other KodeKloud designer apps like Quiz-Designer through an iframe, they talk to each other using `message` event. so if you want to use this editor in your application, you need to use it in an iframe and communicate with it using `message` event. the data structure of the message is as follow:
 
 | Property  | value           | Description                      |
 | --------- | --------------- | -------------------------------- |
-| `type`    | `graph`         | To send/recieve diagram data.    |
+| `type`    | `graph`         | To send/receive diagram data.    |
 | `payload` | `{cells:[...]}` | An object contains diagram data. |
 
 | Property  | value      | Description                          |
@@ -48,7 +48,7 @@ You can setup the editor though query params of the iframe url. the following ta
 
 | Property            | value     | Description                                        |
 | ------------------- | --------- | -------------------------------------------------- |
-| `update_per_change` | `Boolean` | Recieve diagram update per any change on its graph |
+| `update_per_change` | `Boolean` | Receive diagram update per any change on its graph |
 
 ## Recommended IDE Setup
 
