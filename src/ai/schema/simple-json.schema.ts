@@ -1,18 +1,21 @@
 import { shapes, type dia } from 'jointjs'
 import { z } from 'zod'
-import { getCellsBoundary } from '../helpers/jointjs'
+import { getCellsBoundary, normalizeCellsGap } from '../helpers/jointjs'
+import { selectBestMatchingIcon } from '../helpers/icon-selector'
+
+export type SimplifiedCellType = {
+  title: string
+  color: string
+  position: {
+    x: number
+    y: number
+  }
+  connections: string[]
+  groups: string[]
+}
 
 export type SimplifiedCellsType = {
-  cells: Array<{
-    title: string
-    color: string
-    position: {
-      x: number
-      y: number
-    }
-    connections: string[]
-    groups: string[]
-  }>
+  cells: Array<SimplifiedCellType>
 }
 
 export type CellGroupType = {
@@ -96,39 +99,23 @@ export function mapJointJsToSimplifiedCellsSchema(cells: Array<dia.Cell>) {
 
 // This function maps the simplified schema to jointjs cells
 export function mapSimplifiedCellsSchemaToJointJs(data: SimplifiedCellsType) {
-  const cells: Array<dia.Cell> = []
+  let cells: Array<dia.Element> = []
 
   // Create cells
   data.cells.forEach((simpleCell) => {
-    const cell = new shapes.standard.Rectangle()
+    const icon = selectBestMatchingIcon(simpleCell.title)
 
-    cell.position(simpleCell.position.x, simpleCell.position.y)
-    cell.resize(100, 100)
-    cell.attr({
-      body: {
-        fill: simpleCell.color || '#2ECC71',
-        fillOpacity: 0.5
-      },
-      label: {
-        text: simpleCell.title,
-        fill: '#000000',
-        textWrap: {
-          width: -10, // Negative value for padding from the rectangle's width
-          height: 'auto', // 'auto' to automatically adjust height
-          ellipsis: true // Add an ellipsis if the text is too long
-        },
-        textVerticalAnchor: 'middle', // Vertically center the text
-        textAnchor: 'middle', // Horizontally center the text
-        refX: '50%', // Center with respect to the rectangle's width
-        refY: '50%' // Center with respect to the rectangle's height
-      },
-      data: {
-        groups: simpleCell.groups
-      }
-    })
-
-    cells.push(cell)
+    if (icon.length) {
+      const image = createImageFromSimplifiedCell(simpleCell, icon)
+      cells.push(image)
+    } else {
+      const cell = createRectangleFromSimplifiedCell(simpleCell)
+      cells.push(cell)
+    }
   })
+
+  // get sure all cells have at least 150 unit gap
+  cells = normalizeCellsGap(cells, 150)
 
   // create links
   data.cells.forEach((simpleCell) => {
@@ -171,7 +158,7 @@ export function extractAndCreateGroups(cells: Array<dia.Cell>) {
 
   // Create groups
   groups.forEach((group) => {
-    const boundary = getCellsBoundary(group.cells, 20)
+    const boundary = getCellsBoundary(group.cells, 30)
     const rect = new shapes.standard.Rectangle()
 
     rect.position(boundary.x, boundary.y)
@@ -205,4 +192,61 @@ export function extractAndCreateGroups(cells: Array<dia.Cell>) {
   })
 
   return { cells }
+}
+
+function createRectangleFromSimplifiedCell(cell: SimplifiedCellType) {
+  const rect = new shapes.standard.Rectangle()
+
+  rect.position(cell.position.x, cell.position.y)
+  rect.resize(100, 100)
+  rect.attr({
+    body: {
+      fill: cell.color || '#2ECC71',
+      fillOpacity: 0.5
+    },
+    label: {
+      text: cell.title,
+      fill: '#000000',
+      textWrap: {
+        width: -10, // Negative value for padding from the rectangle's width
+        height: 'auto', // 'auto' to automatically adjust height
+        ellipsis: true // Add an ellipsis if the text is too long
+      },
+      textVerticalAnchor: 'middle', // Vertically center the text
+      textAnchor: 'middle', // Horizontally center the text
+      refX: '50%', // Center with respect to the rectangle's width
+      refY: '50%' // Center with respect to the rectangle's height
+    },
+    data: {
+      groups: cell.groups
+    }
+  })
+
+  return rect
+}
+
+function createImageFromSimplifiedCell(cell: SimplifiedCellType, icon: string) {
+  const image = new shapes.standard.Image()
+
+  image.position(cell.position.x, cell.position.y)
+  image.resize(100, 100)
+  image.attr({
+    image: {
+      xlinkHref: icon
+    },
+    label: {
+      text: cell.title,
+      fill: '#000000',
+      textWrap: {
+        width: -10, // Negative value for padding from the rectangle's width
+        height: 'auto', // 'auto' to automatically adjust height
+        ellipsis: true // Add an ellipsis if the text is too long
+      }
+    },
+    data: {
+      groups: cell.groups
+    }
+  })
+
+  return image
 }

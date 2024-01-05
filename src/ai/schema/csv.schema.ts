@@ -12,7 +12,7 @@ export const simplifiedCellsCSVSchema = `
    - color (hex string): Must follow the standard hex color code format, starting with '#' followed by 6 hexadecimal digits.
    - position.x (number) and position.y (number): Integer or floating-point numbers.
    - connections (string array): Semicolon-separated values in one field, e.g., "item1;item2;item3". Each value is a plain text string.
-    - groups (string array): Semicolon-separated values in one field, e.g., "group1;group2;group3". Each value is a plain text string.
+   - groups (string array): Semicolon-separated values in one field, e.g., "group1;group2;group3". Each value is a plain text string.
 
 3. Example Data Entry:
    - Gadget Pro, #00FF77, 102, 305, ConnectorA;ConnectorB;ConnectorC, GroupA;GroupB;GroupC
@@ -34,7 +34,9 @@ function cleanString(str: string) {
   const list = ['"', '/', '\\', '\n', '\r']
 
   for (const item of list) {
-    str = str.replace(item, '')
+    while (str.includes(item)) {
+      str = str.replace(item, '')
+    }
   }
 
   return str
@@ -78,7 +80,6 @@ export function mapCSVToSimplified(csv: string) {
     const rowKeys = Object.keys(row)
     const hasAll = columns.every((column) => rowKeys.includes(column))
     if (!hasAll) {
-      debugger
       continue
     }
 

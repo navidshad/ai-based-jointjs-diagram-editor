@@ -16,7 +16,7 @@ const chatTemplate = ChatPromptTemplate.fromMessages([
       and return the node title, position, and connections according to the given schema.
 
       Consideration:
-        1. Consider One way Flow for connections.
+        1. Connections must be one way.
         2. Consider at least 150 units gapes or more for positioning.
     `
   ],
