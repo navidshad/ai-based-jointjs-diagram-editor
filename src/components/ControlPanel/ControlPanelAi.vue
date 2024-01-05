@@ -90,6 +90,7 @@ async function generateByAi() {
   await generateDiagramWithCSV(prompt.value)
     .then((res) => {
       diagramStore.insertDiagramData(res as any)
+      diagramStore.paper.renderChildren()
     })
     .finally(() => {
       isGeneratingDiagram.value = false
@@ -103,6 +104,7 @@ async function editByAi() {
   await manipulateDiagram(prompt.value, diagramCells)
     .then((res) => {
       diagramStore.insertDiagramData(res as Diagram)
+      diagramStore.paper.renderChildren()
     })
     .finally(() => {
       isEditingDiagram.value = false

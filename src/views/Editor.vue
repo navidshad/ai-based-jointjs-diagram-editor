@@ -1,16 +1,26 @@
 <template>
-  <!-- DIAGRAM CANVAS
+  <splitter-component :sizes="[80, 20]">
+    <template #first="{ width, height }">
+      <!-- DIAGRAM CANVAS
   -->
-  <diagram-canvas :width="bodySize?.width" :height="bodySize?.height" />
+      <diagram-canvas :width="width" :height="height" />
 
-  <!-- ACTIONBAR
+      <!-- ACTIONBAR
   -->
 
-  <action-header-component class="w-full absolute left-0 top-0 z-10" />
+      <action-header-component class="w-full absolute left-0 top-0 z-10" />
+    </template>
+
+    <template #second>
+      <!-- CONTROL PANEL DRAWER
+  -->
+      <control-panel-component :activeSlot="activePanel" />
+    </template>
+  </splitter-component>
 
   <!-- MENU TOGGLES
    -->
-  <teleport to="#diagram-panel-toggle">
+  <!-- <teleport to="#diagram-panel-toggle">
     <v-btn
       class="rounded-sm"
       variant="flat"
@@ -28,11 +38,7 @@
         <span>Toggle control panel</span>
       </v-tooltip>
     </v-btn>
-  </teleport>
-
-  <!-- CONTROL PANEL DRAWER
-  -->
-  <control-panel-component :activeSlot="activePanel" />
+  </teleport> -->
 </template>
 
 <script setup lang="ts">
@@ -40,9 +46,8 @@ import { inject, ref } from 'vue'
 import DiagramCanvas from '@/components/DiagramCanvas.vue'
 import ActionHeaderComponent from '@/components/ActionHeader.vue'
 import ControlPanelComponent from '@/components/ControlPanel/ControlPanel.vue'
-import { useConfigStore } from '@/stores/config'
+import SplitterComponent from '@/components/layout/SplitterView.vue'
 
-const configStore = useConfigStore()
 const bodySize = inject<{ width: number; height: number }>('bodySize')
 
 const activePanel = ref(true)

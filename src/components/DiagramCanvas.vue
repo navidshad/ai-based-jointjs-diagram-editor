@@ -25,6 +25,13 @@ const props = defineProps({
   }
 })
 
+watch(
+  () => [props.width, props.height],
+  () => {
+    diagramStore.paper?.setDimensions(props.width, props.height)
+  }
+)
+
 const frameSize = computed(() => {
   return {
     width: props.width,
