@@ -127,6 +127,9 @@ watch(isCreating, () => {
 function onSelectShape(type: string) {
   selectedShape.value = type as any
 
+  // reset viewport scale
+  diagramStore.paper.value.scale(1)
+
   if (type === 'none') return
 
   mouseStart = { x: 0, y: 0, id: '' }
@@ -148,7 +151,16 @@ function onDragStart(event: DragEvent) {
   }
 
   const shape = primitiveShapes[selectedShape.value]
-  shape.position = { x: mouseStart.x, y: mouseStart.y }
+
+  // get paper position
+  // paper position is the offset of the paper from the top left of the window
+  const { tx, ty } = diagramStore.paper.value.translate()
+
+  shape.position = {
+    x: mouseStart.x - tx,
+    y: mouseStart.y - ty
+  }
+
   shape.id = mouseStart.id
 
   diagramStore.addElementFromJson(shape)

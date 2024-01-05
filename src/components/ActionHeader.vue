@@ -30,44 +30,7 @@
       Transform actions
      -->
     <div class="action-group">
-      <!-- <v-btn
-        icon="m"
-        size="x-small"
-        @click="transform = 'move'"
-        :color="isSelected('move')"
-      >
-        <v-icon size="15" icon="mdi-axis-arrow" />
-
-        <v-tooltip location="bottom" activator="parent">
-          <span>Move active element</span>
-        </v-tooltip>
-      </v-btn>
-
-      <v-btn
-        icon="m"
-        size="x-small"
-        @click="transform = 'rotate'"
-        :color="isSelected('rotate')"
-      >
-        <v-icon size="15" icon="mdi-autorenew" />
-
-        <v-tooltip location="bottom" activator="parent">
-          <span>Rotate active element</span>
-        </v-tooltip>
-      </v-btn>
-
-      <v-btn
-        icon="m"
-        size="x-small"
-        @click="transform = 'scale'"
-        :color="isSelected('scale')"
-      >
-        <v-icon size="15" icon="mdi-resize" />
-
-        <v-tooltip location="bottom" activator="parent">
-          <span>Scale active element</span>
-        </v-tooltip>
-      </v-btn> -->
+      <v-slider v-model="zoom" class="w-48" :max="3" :min="0.1" />
     </div>
 
     <!-- 
@@ -86,6 +49,8 @@ import { ref } from 'vue'
 import JsonViewComponent from './JsonView.vue'
 import { useConfigStore } from '@/stores/config'
 import { useDiagramStore } from '@/stores/diagram'
+import { watch } from 'vue'
+import { onMounted } from 'vue'
 
 const configStore = useConfigStore()
 const diagramStore = useDiagramStore()
@@ -97,7 +62,20 @@ function save() {
 
 function resetPan() {
   diagramStore.paper.value.translate(0, 0)
+  diagramStore.paper.value.scale(1)
 }
+
+const zoom = ref(1)
+watch(
+  () => zoom.value,
+  (val) => {
+    diagramStore.paper.value.scale(val)
+  }
+)
+
+onMounted(() => {
+  zoom.value = diagramStore.paper.value.scale().sx
+})
 </script>
 
 <style lang="scss" scoped>

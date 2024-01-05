@@ -5,7 +5,7 @@
   -->
       <diagram-canvas :width="width" :height="height" />
 
-      <!-- ACTIONBAR
+      <!-- ACTION BAR
   -->
 
       <action-header-component
