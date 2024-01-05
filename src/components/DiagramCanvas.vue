@@ -28,7 +28,7 @@ const props = defineProps({
 watch(
   () => [props.width, props.height],
   () => {
-    diagramStore.paper?.setDimensions(props.width, props.height)
+    diagramStore.paper.value?.setDimensions(props.width, props.height)
   }
 )
 
@@ -45,11 +45,11 @@ const panControllerValues = ref({
   isOverElement: false
 })
 
-watch(props, () => diagramStore.paper?.setDimensions(props.width, props.height))
+watch(props, () => diagramStore.paper.value?.setDimensions(props.width, props.height))
 
 onBeforeMount(() => {
   // @ts-ignore
-  diagramStore.paper?.remove()
+  diagramStore.paper.value?.remove()
 
   window.removeEventListener('mousemove', updateMousePosition)
   // window.removeEventListener('wheel', diagramStore.handleMouseWheel)
@@ -88,7 +88,7 @@ function initiateDiagram() {
   // Events
   //
 
-  diagramStore.paper?.on({
+  diagramStore.paper.value?.on({
     'element:pointerdown': function (elementView, evt, x, y) {
       evt.data = { x, y }
 
@@ -109,14 +109,16 @@ function initiateDiagram() {
       // Ignore if the element is not connectable
       if (sourceElement.prop('data/noneConnectable') || false) return
 
-      let destElementView = diagramStore.paper?.findViewsFromPoint(coordinates).find(function (el) {
-        // @ts-ignore
-        const isNotSourceElement = el.model.id !== sourceElement.id
-        // @ts-ignore
-        const isNoneConnectable = el.model.prop('data/noneConnectable') || false
+      let destElementView = diagramStore.paper.value
+        ?.findViewsFromPoint(coordinates)
+        .find(function (el) {
+          // @ts-ignore
+          const isNotSourceElement = el.model.id !== sourceElement.id
+          // @ts-ignore
+          const isNoneConnectable = el.model.prop('data/noneConnectable') || false
 
-        return isNotSourceElement && !isNoneConnectable
-      }) as CustomElementView
+          return isNotSourceElement && !isNoneConnectable
+        }) as CustomElementView
 
       if (!destElementView) return
 

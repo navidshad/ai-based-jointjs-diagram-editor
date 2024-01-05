@@ -96,7 +96,7 @@ function save() {
 }
 
 function resetPan() {
-  diagramStore.paper.translate(0, 0)
+  diagramStore.paper.value.translate(0, 0)
 }
 </script>
 

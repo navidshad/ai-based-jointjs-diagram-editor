@@ -56,7 +56,7 @@ export default defineComponent({
 
   data() {
     return {
-      tab: 'properties'
+      tab: 'ai'
     }
   },
 

@@ -131,9 +131,9 @@ function onSelectShape(type: string) {
 
   mouseStart = { x: 0, y: 0, id: '' }
 
-  diagramStore.paper.on('blank:pointerdown', onDragStart)
-  diagramStore.paper.on('blank:pointermove', onDragging)
-  diagramStore.paper.on('blank:pointerup', onDragEnd)
+  diagramStore.paper.value.on('blank:pointerdown', onDragStart)
+  diagramStore.paper.value.on('blank:pointermove', onDragging)
+  diagramStore.paper.value.on('blank:pointerup', onDragEnd)
 }
 
 function onDragStart(event: DragEvent) {
@@ -171,11 +171,11 @@ function onDragEnd(event: DragEvent) {
   isCreating.value = false
 
   // @ts-ignore
-  diagramStore.paper.off('blank:pointerdown', onDragStart)
+  diagramStore.paper.value.off('blank:pointerdown', onDragStart)
   // @ts-ignore
-  diagramStore.paper.off('blank:pointermove', onDragging)
+  diagramStore.paper.value.off('blank:pointermove', onDragging)
   // @ts-ignore
-  diagramStore.paper.off('blank:pointerup', onDragEnd)
+  diagramStore.paper.value.off('blank:pointerup', onDragEnd)
 }
 </script>
 

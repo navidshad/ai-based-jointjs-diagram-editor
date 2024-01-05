@@ -61,8 +61,15 @@ const isGeneratingDiagram = ref(false)
 const isEditingDiagram = ref(false)
 const isImprovingPrompt = ref(false)
 
+const prompt = ref(`My requirement is for a user to make a request to a 3-tier application. 
+
+Once the user makes the request to the front page, which is deployed on a network load balancer running on 5 container apps, 
+
+The second tier consists of business logic which is deployed on a private EC2 cluster that can only be connected to via a bastion host. 
+
+The final layer is deployed partly on RDS and partly on DynamoDB.`)
+
 const isValidPrompt = ref(true)
-const prompt = ref('')
 const promptRules = [
   (v: string) => !!v || 'Prompt is required',
   (v: string) => v.length <= 20000 || 'Prompt must be less than 2000 characters'

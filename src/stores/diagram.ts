@@ -9,7 +9,9 @@ import { ref } from 'vue'
 export const useDiagramStore = defineStore('diagram', () => {
   const hierarchyStore = new HierarchyStore()
   const graph = new dia.Graph([], { cellNamespace: shapes })
-  const paper = ref<dia.Paper>(new dia.Paper({}))
+  const paper = {
+    value: new dia.Paper({})
+  }
 
   function addPaper(options: dia.Paper.Options) {
     paper.value = new dia.Paper(options)
