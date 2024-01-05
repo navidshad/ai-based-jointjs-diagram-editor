@@ -5,17 +5,30 @@ This a Jointjs Diagram Editor that generates json base diagrams, then you can us
 **Demo**: https://diagram-designer-kodekloud-apps-ca596a9024df03c47dc6b3da46040fe.gitlab.io
 
 ## Features
-- [x] Drag and Drop Shapes
-- [x] Connect Shapes
-- [x] Default KK Shapes
-- [x] Import/Export json data
-- [x] Iframe Communication
+
+### Creation methods
+- [x] Drag and Drop.
+- [x] Drag and Create.
+
+### Shapes
+- [x] Default KK Shapes.
+- [x] Primitive Shapes.
+
+### Iframe Communication
+- [x] Define configuration from Parent.
+- [x] Send receive diagram data between the app and parent frame.
+- [ ] Add custom shapes (img based).
+
+### Canvas 
+- [x] Create Link between elements.
+- [x] Move elements.
+
+### Other
 - [x] Edit Shape properties.
-- [x] Add Custom images.
-- [x] Resize controller on canvas.
-- [x] Generate/modifyAdd diagram through GPT-4.
-- [x] Add group for a set of shapes (in Ai result only)
-- [ ] Add group for a set of shapes
+- [x] Add custom images.
+- [x] Import/Export json data.
+- [ ] Group a sort of elements.
+- [ ] Create and Manipulate Diagram by prompting.
 
 ## Ifram & Communication
 This Editor is being used by few other KodeKloud designer apps like Qize-Designer through an iframe, they talk to each other using `message` event. so if you want to use this editor in your application, you need to use it in an iframe and communicate with it using `message` event. the data structure of the message is as follow:
