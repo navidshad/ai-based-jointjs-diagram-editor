@@ -5,6 +5,7 @@
         <v-tab value="properties">Properties</v-tab>
         <v-tab value="primitives">Primitives</v-tab>
         <v-tab value="shapes">Shapes</v-tab>
+        <v-tab value="ai">AI</v-tab>
       </v-tabs>
 
       <v-window class="flex-1 h-full" v-model="tab">
@@ -19,6 +20,10 @@
         <v-window-item value="properties" class="h-full">
           <control-panel-properties />
         </v-window-item>
+
+        <v-window-item value="ai" class="h-full">
+          <control-panel-ai />
+        </v-window-item>
       </v-window>
     </section>
   </v-navigation-drawer>
@@ -30,9 +35,15 @@ import { AdditionalPanel } from '@/model/additional-panel.model'
 import ControlPanelProperties from './ControlPanelProperties.vue'
 import ControlPanelShapes from './ControlPanelShapes.vue'
 import ControlPanelPrimitives from './ControlPanelPrimitives.vue'
+import ControlPanelAi from './ControlPanelAi.vue'
 
 export default defineComponent({
-  components: { ControlPanelShapes, ControlPanelProperties, ControlPanelPrimitives },
+  components: {
+    ControlPanelShapes,
+    ControlPanelProperties,
+    ControlPanelPrimitives,
+    ControlPanelAi
+  },
 
   props: {
     // possible values

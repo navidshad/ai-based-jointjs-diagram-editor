@@ -130,13 +130,5 @@ function setSize(wValue: string | number, hValue: string | number) {
         </div>
       </v-card-text>
     </v-card>
-
-    <!-- <v-textarea
-      :model-value="JSON.stringify(props.item.element.attributes)"
-      label="Label"
-      outlined
-      dense
-      class="w-full"
-    /> -->
   </div>
 </template>

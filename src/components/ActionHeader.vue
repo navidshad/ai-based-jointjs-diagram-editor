@@ -1,5 +1,5 @@
 <template>
-  <div v-bind="$attrs" class="action-header" :style="{ width: width + 'px' }">
+  <div v-bind="$attrs" class="action-header">
     <div class="action-group">
       <v-btn icon="m" color="white" size="x-small" @click="resetPan">
         <v-icon size="15" icon="mdi-eye-refresh" />
@@ -81,42 +81,23 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
+import { ref } from 'vue'
 import JsonViewComponent from './JsonView.vue'
+import { useConfigStore } from '@/stores/config'
+import { useDiagramStore } from '@/stores/diagram'
 
-export default defineComponent({
-  components: { JsonViewComponent },
+const configStore = useConfigStore()
+const diagramStore = useDiagramStore()
+const jsonView = ref(false)
 
-  emits: ['save'],
+function save() {
+  configStore.updateParentWindowWithGraph(diagramStore.graph.toJSON())
+}
 
-  props: {
-    resetPan: { type: Function },
-    width: { type: Number, default: 0 }
-  },
-
-  data() {
-    return {
-      // transform: "move",
-      jsonView: false
-    }
-  },
-
-  watch: {
-    // transform() {
-    //   this.$emit("transform", this.transform);
-    // },
-  },
-
-  methods: {
-    // isSelected(key) {
-    //   return key == this.transform ? "secondary" : "white";
-    // },
-    save() {
-      this.$emit('save')
-    }
-  }
-})
+function resetPan() {
+  diagramStore.paper.translate(0, 0)
+}
 </script>
 
 <style lang="scss" scoped>

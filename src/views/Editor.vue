@@ -6,10 +6,7 @@
   <!-- ACTIONBAR
   -->
 
-  <action-header-component
-    class="w-full absolute left-0 top-0 z-10"
-    @save="configStore.updateParentWindowWithGraph"
-  />
+  <action-header-component class="w-full absolute left-0 top-0 z-10" />
 
   <!-- MENU TOGGLES
    -->

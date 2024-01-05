@@ -113,11 +113,16 @@
 import { useDiagramStore } from '@/stores/diagram'
 import { type PrimitiveType, primitiveShapes } from '@/static/primitives-initial'
 import { ref } from 'vue'
+import { watch } from 'vue'
 
 const diagramStore = useDiagramStore()
 const selectedShape = ref<PrimitiveType | 'none'>('none')
-let isCreating = false
+let isCreating = ref(false)
 let mouseStart = { x: 0, y: 0, id: '' }
+
+watch(isCreating, () => {
+  diagramStore.isViewPortLocked = isCreating.value
+})
 
 function onSelectShape(type: string) {
   selectedShape.value = type as any
@@ -132,9 +137,9 @@ function onSelectShape(type: string) {
 }
 
 function onDragStart(event: DragEvent) {
-  if (isCreating) return
+  if (isCreating.value) return
 
-  isCreating = true
+  isCreating.value = true
 
   mouseStart = {
     x: event.offsetX,
@@ -163,7 +168,7 @@ function onDragging(event: DragEvent) {
 }
 
 function onDragEnd(event: DragEvent) {
-  isCreating = false
+  isCreating.value = false
 
   // @ts-ignore
   diagramStore.paper.off('blank:pointerdown', onDragStart)
