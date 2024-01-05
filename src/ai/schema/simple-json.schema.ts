@@ -145,7 +145,6 @@ export function extractAndCreateGroups(cells: Array<dia.Element | dia.Link>) {
     const groupTitle = cell.prop('data/group')
     const isLink = cell.isLink()
 
-    debugger
     if (isLink) continue
     if (!groupTitle) continue
 
@@ -193,6 +192,22 @@ export function extractAndCreateGroups(cells: Array<dia.Element | dia.Link>) {
 
     try {
       rect.embed(group.cells)
+    } catch (error) {
+      console.log(error)
+    }
+
+    // take all links which their source element added already, and add in the group
+    const links = cells.filter((link) => {
+      const isLink = link.isLink()
+      if (!isLink) return false
+
+      const sourceId = (link as dia.Link).getSourceElement()?.id
+      const sourceAlreadyAdded = group.cells.find((groupCell) => groupCell.id === sourceId)
+      return isLink && sourceAlreadyAdded
+    })
+
+    try {
+      rect.embed(links)
     } catch (error) {
       console.log(error)
     }

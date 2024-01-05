@@ -6,6 +6,21 @@ import { useConfigStore } from './config'
 import { HierarchyItem, ToolsViewItem } from '@/model/hierarchy.model'
 import { ref } from 'vue'
 
+class ResizeTool extends elementTools.Control {
+  protected getPosition(view: dia.ElementView): dia.Point {
+    // @ts-ignore
+    const model = view.model
+    const { width, height } = model.size()
+    return { x: width, y: height }
+  }
+
+  protected setPosition(view: dia.ElementView, coordinates: dia.Point): void {
+    // @ts-ignore
+    const model = view.model
+    model.resize(Math.max(coordinates.x, 1), Math.max(coordinates.y, 1))
+  }
+}
+
 export const useDiagramStore = defineStore('diagram', () => {
   const hierarchyStore = new HierarchyStore()
   const graph = new dia.Graph([], { cellNamespace: shapes })
@@ -98,10 +113,39 @@ export const useDiagramStore = defineStore('diagram', () => {
   }
 
   function addStandardToolsViewsForElement(element: dia.Element) {
-    const boundaryTool = new elementTools.Boundary()
+    const tools: dia.ToolView[] = [
+      // Shows boundary box around selected element
+      new elementTools.Boundary()
+    ]
+
+    // if image
+    // Add size controller for selected element
+    if (element.attr('image/xlinkHref')) {
+      tools.push(
+        new ResizeTool({
+          selector: 'image',
+          handleAttributes: {
+            fill: '#4666E5'
+          }
+        })
+      )
+    }
+
+    // if primitive
+    // Add size controller for selected element
+    if (element.attr('body/fill')) {
+      tools.push(
+        new ResizeTool({
+          selector: 'body',
+          handleAttributes: {
+            fill: '#4666E5'
+          }
+        })
+      )
+    }
 
     const toolsView = new dia.ToolsView({
-      tools: [boundaryTool]
+      tools: tools
     })
 
     const elementView: CustomElementView = element.findView(
