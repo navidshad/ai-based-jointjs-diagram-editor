@@ -11,7 +11,7 @@ export type SimplifiedCellType = {
     y: number
   }
   connections: string[]
-  groups: string[]
+  group: string
 }
 
 export type SimplifiedCellsType = {
@@ -19,7 +19,7 @@ export type SimplifiedCellsType = {
 }
 
 export type CellGroupType = {
-  cells: Array<dia.Cell>
+  cells: Array<dia.Element>
   title: string
 }
 
@@ -38,7 +38,7 @@ export const simplifiedCellsSchema = z.object({
         connections: z.array(
           z.string().describe('Other cell titles that this cell is connected to.')
         ),
-        groups: z.array(z.string().describe('Any group that this cell is grouped with.'))
+        group: z.string().describe('Any group that this cell is grouped with.')
       })
     )
     .describe('Array of cells.')
@@ -66,7 +66,7 @@ export function mapJointJsToSimplifiedCellsSchema(cells: Array<dia.Cell>) {
           y: position.y
         },
         connections: [],
-        groups: cell.attr('data/groups') || []
+        group: cell.prop('data/group') || null
       })
     }
   })
@@ -118,6 +118,7 @@ export function mapSimplifiedCellsSchemaToJointJs(data: SimplifiedCellsType) {
   cells = normalizeCellsGap(cells, 150)
 
   // create links
+  const links: dia.Link[] = []
   data.cells.forEach((simpleCell) => {
     simpleCell.connections.forEach((connection) => {
       const sourceCell = cells.find((cell) => cell.attr('label/text') === simpleCell.title)
@@ -127,34 +128,38 @@ export function mapSimplifiedCellsSchemaToJointJs(data: SimplifiedCellsType) {
         const link = new shapes.standard.Link()
         link.source(sourceCell)
         link.target(targetCell)
-        cells.push(link)
+        links.push(link)
       }
     })
   })
 
-  return { cells }
+  return { cells: [...cells, ...links] }
 }
 
-export function extractAndCreateGroups(cells: Array<dia.Cell>) {
+export function extractAndCreateGroups(cells: Array<dia.Element | dia.Link>) {
   const groups: Array<CellGroupType> = []
 
   // Retrieve groups
-  cells.forEach((cell) => {
-    const cellGroups = cell.attr('data/groups')
-    if (cellGroups) {
-      cellGroups.forEach((groupTitle: string) => {
-        const groupCells = groups.find((group) => group.title === groupTitle)
-        if (groupCells) {
-          groupCells.cells.push(cell)
-        } else {
-          groups.push({
-            title: groupTitle,
-            cells: [cell]
-          })
-        }
+  for (let i = 0; i < cells.length; i++) {
+    const cell = cells[i]
+    const groupTitle = cell.prop('data/group')
+    const isLink = cell.isLink()
+
+    debugger
+    if (isLink) continue
+    if (!groupTitle) continue
+
+    const existedGroup = groups.find((group) => group.title === groupTitle)
+
+    if (existedGroup) {
+      existedGroup.cells.push(cell)
+    } else {
+      groups.push({
+        title: groupTitle,
+        cells: [cell]
       })
     }
-  })
+  }
 
   // Create groups
   groups.forEach((group) => {
@@ -222,11 +227,10 @@ function createRectangleFromSimplifiedCell(cell: SimplifiedCellType) {
       textAnchor: 'middle', // Horizontally center the text
       refX: '50%', // Center with respect to the rectangle's width
       refY: '50%' // Center with respect to the rectangle's height
-    },
-    data: {
-      groups: cell.groups
     }
   })
+
+  rect.prop('data', { group: cell.group })
 
   return rect
 }
@@ -248,11 +252,10 @@ function createImageFromSimplifiedCell(cell: SimplifiedCellType, icon: string) {
         height: 'auto', // 'auto' to automatically adjust height
         ellipsis: true // Add an ellipsis if the text is too long
       }
-    },
-    data: {
-      groups: cell.groups
     }
   })
+
+  image.prop('data', { group: cell.group })
 
   return image
 }

@@ -1,3 +1,5 @@
+import type { SimplifiedCellType } from './simple-json.schema'
+
 export const simplifiedCellsCSVSchema = `
 1. Header Row Description:
    - title: A text string representing the name or title of an item.
@@ -5,30 +7,30 @@ export const simplifiedCellsCSVSchema = `
    - position.x: A numerical value representing the X-coordinate in a 2D space.
    - position.y: A numerical value representing the Y-coordinate in a 2D space.
    - connections: A list of strings, each representing a connection or link to another item.
-   - groups: A list of strings, each representing a group or category that the item belongs to.
+   - group: A string value, representing a group or category that the item belongs to.
 
 2. Data Type Specifications:
    - title (string): Plain text, no special format.
    - color (hex string): Must follow the standard hex color code format, starting with '#' followed by 6 hexadecimal digits.
    - position.x (number) and position.y (number): Integer or floating-point numbers.
    - connections (string array): Semicolon-separated values in one field, e.g., "item1;item2;item3". Each value is a plain text string.
-   - groups (string array): Semicolon-separated values in one field, e.g., "group1;group2;group3". Each value is a plain text string.
+   - group (string): plain text string.
 
 3. Example Data Entry:
-   - Gadget Pro, #00FF77, 102, 305, ConnectorA;ConnectorB;ConnectorC, GroupA;GroupB;GroupC
+   - Gadget Pro, #00FF77, 102, 305, ConnectorA;ConnectorB;ConnectorC, GroupA
 
 4. Instructions for GPT-4:
    - Title: Interpret as a simple text string.
    - Color: Validate as a hex color code. Optionally, translate hex codes into color names or descriptions.
    - Position Coordinates: Treat as numerical values. They can be used for plotting on a graph or map, or for any spatial calculations.
    - Connections: Split the string by semicolons to get an array of connections. Each connection can be treated as an identifier for another item or entity.
-    - Groups: Split the string by semicolons to get an array of groups. Each group can be treated as an identifier for a category or classification.
+   - Group: Treat as a string value. It can be used to categorize items or entities.
 
 5. Validation Rules:
    - Ensure that the color field matches the hex color pattern.
    - Check that position.x and position.y are valid numeric values.
    - Verify that the connections field correctly splits into an array of strings.
-   - Verify that the groups field correctly splits into an array of strings.
+   - Ensure that the group field is a string value.
 `
 function cleanString(str: string) {
   const list = ['"', '/', '\\', '\n', '\r']
@@ -65,7 +67,7 @@ export function parseCSV(csv: string) {
 export function mapCSVToSimplified(csv: string) {
   const data = parseCSV(csv)
   const columns = ['title', 'position.x', 'position.y']
-  const cells = []
+  const cells: SimplifiedCellType[] = []
 
   for (let index = 0; index < data.length; index++) {
     const row = data[index]
@@ -73,8 +75,6 @@ export function mapCSVToSimplified(csv: string) {
     const connections = row.connections
       ? row.connections.split(';').map((connection) => connection.trim())
       : []
-
-    const groups = row.groups ? row.groups.split(';').map((group) => group.trim()) : []
 
     // if has all columns
     const rowKeys = Object.keys(row)
@@ -91,7 +91,7 @@ export function mapCSVToSimplified(csv: string) {
         y: Number(row['position.y'])
       },
       connections,
-      groups
+      group: row.group || null
     })
   }
 
