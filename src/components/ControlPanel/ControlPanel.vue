@@ -1,6 +1,6 @@
 <template>
-  <section class="overflow-y-auto bg-white h-screen">
-    <v-tabs v-model="tab" fixed-tabs>
+  <section class="overflow-y-auto bg-white h-screen" :style="{ width: width + 'px' }">
+    <v-tabs v-model="tab" align-tabs="center" class="w-full">
       <v-tab value="properties">Properties</v-tab>
       <v-tab value="primitives">Primitives</v-tab>
       <v-tab value="shapes">Shapes</v-tab>
@@ -29,7 +29,6 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
-import { AdditionalPanel } from '@/model/additional-panel.model'
 import ControlPanelProperties from './ControlPanelProperties.vue'
 import ControlPanelShapes from './ControlPanelShapes.vue'
 import ControlPanelPrimitives from './ControlPanelPrimitives.vue'
@@ -44,13 +43,9 @@ export default defineComponent({
   },
 
   props: {
-    // possible values
-    // ['none', 'default', 'other-slot-values' from additionalPanels members]
-    activeSlot: { type: Boolean, default: true },
-
-    additionalPanels: {
-      type: Array as PropType<AdditionalPanel[]>,
-      default: () => []
+    width: {
+      type: Number as PropType<number>,
+      required: true
     }
   },
 

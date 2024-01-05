@@ -17,7 +17,7 @@
     <template #second="{ width }">
       <!-- CONTROL PANEL DRAWER
   -->
-      <control-panel-component :activeSlot="activePanel" :width="width" />
+      <control-panel-component :width="width" />
     </template>
   </splitter-component>
 
