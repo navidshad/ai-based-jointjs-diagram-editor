@@ -17,20 +17,19 @@
 
     <div id="split-1" class="overflow-y-scroll h-full relative">
       <!-- @vue-skip -->
-      <ElementProperties v-if="selected != null" :item="selected" />
+      <ElementProperties v-if="selected != null" :itemId="selected" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import Split from 'split.js'
-import Hierarchy from './Hierarchy.vue'
-import ElementProperties from './ElementProperties.vue'
+import Hierarchy from './ControlPanelPropertiesHierarchy.vue'
+import ElementProperties from './ControlPanelPropertiesElementProperties.vue'
 import { onMounted, ref } from 'vue'
-import type { HierarchyItem } from '@/model/hierarchy.model'
 import AddCustomImageForm from '@/components/ControlPanel/AddCustomImageForm.vue'
 
-const selected = ref<HierarchyItem | null>(null)
+const selected = ref<string | null>(null)
 
 onMounted(() => {
   Split(['#split-0', '#split-1'], {
@@ -39,8 +38,8 @@ onMounted(() => {
   })
 })
 
-function onElementSelected(item: HierarchyItem | null) {
-  selected.value = item
+function onElementSelected(id: string | null | undefined) {
+  selected.value = id || null
 }
 </script>
 

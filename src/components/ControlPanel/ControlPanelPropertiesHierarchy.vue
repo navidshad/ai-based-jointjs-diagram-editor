@@ -5,7 +5,7 @@
       v-for="(item, i) in hierarchyStore.data"
       :key="i"
       :value="item"
-      :active="item.id == selected?.id"
+      :active="item.id == selectedId"
     >
       <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
       <v-list-item-title v-text="item.name || item.id" />
@@ -21,14 +21,13 @@
 <script setup lang="ts">
 import { HierarchyItem } from '@/model/hierarchy.model'
 import { useDiagramStore } from '@/stores/diagram'
-import { watch } from 'vue'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 
 const diagramStore = useDiagramStore()
 const key = ref(new Date().getTime())
-const selected = ref<HierarchyItem | null>(null)
+const selectedId = ref<string | null>(null)
 
-const emit = defineEmits<{ (event: 'selected', item: HierarchyItem | null): void }>()
+const emit = defineEmits<{ (event: 'selected', itemId: string | null | undefined): void }>()
 const hierarchyStore = computed(() => diagramStore.hierarchyStore)
 
 onMounted(() => {
@@ -43,14 +42,6 @@ onBeforeUnmount(() => {
   diagramStore.hierarchyStore.removeEvent('select', activeItem)
 })
 
-watch(
-  () => selected.value,
-  (value) => {
-    emit('selected', value as any)
-  },
-  { immediate: true, deep: true }
-)
-
 function generateNewKey() {
   key.value = new Date().getTime()
 }
@@ -58,8 +49,8 @@ function generateNewKey() {
 function activeItem(item: HierarchyItem | undefined | null) {
   if (!item) return
 
-  // @ TODO fix this
-  // selected.value = item
+  selectedId.value = item.id
+  emit('selected', item.id)
   diagramStore.hierarchyStore.activeItem(item)
   key.value = new Date().getTime()
 }
@@ -73,8 +64,8 @@ function onRemoveItem(item: HierarchyItem) {
   diagramStore.graph.removeCells([item.element])
   diagramStore.hierarchyStore.remove(item.id)
 
-  if (selected.value?.id == item.id) {
-    selected.value = null
+  if (selectedId.value == item.id) {
+    selectedId.value = null
   }
 }
 </script>

@@ -1,24 +1,30 @@
 <script setup lang="ts">
 import type { HierarchyItem } from '@/model/hierarchy.model'
+import { useDiagramStore } from '@/stores/diagram'
 import { computed, watch, ref } from 'vue'
 
 const props = defineProps<{
-  item: HierarchyItem | null
+  itemId: string | null
 }>()
 
+const diagramStore = useDiagramStore()
 const label = ref('')
 const color = ref('')
+const item = computed(() => {
+  if (!props.itemId) return null
+  return diagramStore.hierarchyStore.find(props.itemId)
+})
 
 const isImage = computed(() => {
-  return props.item?.element.attr('image') != null
+  return item.value?.element.attr('image') != null
 })
 
 watch(
-  () => props.item,
-  (value: HierarchyItem | null) => {
+  () => props.itemId,
+  (value: string | null) => {
     if (value) {
-      label.value = props.item?.name as string
-      color.value = props.item?.element.attr('body/fill') as string
+      label.value = item.value?.name as string
+      color.value = item.value?.element.attr('body/fill') as string
     }
   },
   { immediate: true, deep: true }
@@ -27,13 +33,13 @@ watch(
 watch(
   () => label.value,
   (value: string) => {
-    props.item?.changeLabel(value)
+    item.value?.changeLabel(value)
   }
 )
 watch(
   () => color.value,
   (value: string) => {
-    props.item?.element.attr('body/fill', value)
+    item.value?.element.attr('body/fill', value)
   }
 )
 
@@ -45,16 +51,16 @@ function setZIndex(value: string | number) {
 function setPosition(xValue: string | number, yValue: string | number) {
   xValue = parseInt(xValue.toString())
   yValue = parseInt(yValue.toString())
-  props.item?.element.position(xValue, yValue)
+  item.value?.element.position(xValue, yValue)
 }
 
 function setSize(wValue: string | number, hValue: string | number) {
   wValue = parseInt(wValue.toString())
   hValue = parseInt(hValue.toString())
-  props.item?.element.size(wValue, hValue)
+  item.value?.element.size(wValue, hValue)
 
   // activate wrap text
-  props.item?.element.attr('label/textWrap', {
+  item.value?.element.attr('label/textWrap', {
     width: wValue,
     height: hValue,
     ellipsis: true
@@ -63,7 +69,7 @@ function setSize(wValue: string | number, hValue: string | number) {
 </script>
 
 <template>
-  <div class="w-full" v-if="props.item != null">
+  <div class="w-full" v-if="item != null">
     <v-card variant="plain">
       <!-- <v-card-title>Label</v-card-title> -->
       <v-card-text>
@@ -76,15 +82,15 @@ function setSize(wValue: string | number, hValue: string | number) {
       <v-card-text>
         <div class="flex space-x-2">
           <v-text-field
-            :model-value="props.item.element.position().x"
-            @update:model-value="setPosition($event, props.item.element.position().y)"
+            :model-value="item.element.position().x"
+            @update:model-value="setPosition($event, item.element.position().y)"
             label="x"
             type="number"
           />
 
           <v-text-field
-            :model-value="props.item.element.position().y"
-            @update:model-value="setPosition(props.item.element.position().x, $event)"
+            :model-value="item.element.position().y"
+            @update:model-value="setPosition(item.element.position().x, $event)"
             label="y"
             type="number"
           />
@@ -92,15 +98,15 @@ function setSize(wValue: string | number, hValue: string | number) {
 
         <div class="flex space-x-2">
           <v-text-field
-            :model-value="props.item.element.size().width"
-            @update:model-value="setSize($event, props.item.element.size().height)"
+            :model-value="item.element.size().width"
+            @update:model-value="setSize($event, item.element.size().height)"
             label="width"
             type="number"
           />
 
           <v-text-field
-            :model-value="props.item.element.size().height"
-            @update:model-value="setSize(props.item.element.size().width, $event)"
+            :model-value="item.element.size().height"
+            @update:model-value="setSize(item.element.size().width, $event)"
             label="height"
             type="number"
           />
