@@ -7,6 +7,10 @@
       :value="item"
       :active="item.id == selectedId"
     >
+      <template v-if="item.isGroup" #prepend>
+        <v-chip class="mr-1">Group</v-chip>
+      </template>
+
       <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
       <v-list-item-title v-text="item.name || item.id" />
 

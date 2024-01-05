@@ -30,6 +30,10 @@ export class HierarchyItem {
     this.toolsViewList = data.toolsViewList
   }
 
+  get isGroup() {
+    return this.element.prop('data/type') == 'group'
+  }
+
   getToolsView(type: ToolsViewType) {
     return this.toolsViewList.find((item) => item.type == type)
   }
