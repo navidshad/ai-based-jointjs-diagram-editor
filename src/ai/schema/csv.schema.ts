@@ -91,7 +91,7 @@ export function mapCSVToSimplified(csv: string) {
         y: Number(row['position.y'])
       },
       connections,
-      group: row.group || null
+      group: row.group || ''
     })
   }
 
