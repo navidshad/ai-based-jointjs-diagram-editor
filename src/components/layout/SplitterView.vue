@@ -41,7 +41,6 @@ let secondEL
 
 function createSplitterInstance(minSize, initSizes, isHorizontal, frameHtmlElement) {
   splitInstance = Split([firstEl, secondEL], {
-    gutterSize: 24,
     minSize: minSize,
     sizes: initSizes,
     direction: isHorizontal ? 'horizontal' : 'vertical',

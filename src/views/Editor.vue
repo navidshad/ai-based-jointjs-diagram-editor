@@ -11,10 +11,10 @@
       <action-header-component class="w-full absolute left-0 top-0 z-10" />
     </template>
 
-    <template #second>
+    <template #second="{ height }">
       <!-- CONTROL PANEL DRAWER
   -->
-      <control-panel-component :activeSlot="activePanel" />
+      <control-panel-component :activeSlot="activePanel" :style="{ height: height + 'px' }" />
     </template>
   </splitter-component>
 

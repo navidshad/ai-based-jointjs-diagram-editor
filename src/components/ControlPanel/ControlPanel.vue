@@ -1,5 +1,5 @@
 <template>
-  <section class="h-screen bg-white">
+  <section class="overflow-y-auto bg-white">
     <v-tabs v-model="tab" fixed-tabs>
       <v-tab value="properties">Properties</v-tab>
       <v-tab value="primitives">Primitives</v-tab>

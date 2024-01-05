@@ -1,5 +1,5 @@
 <template>
-  <div ref="editorEl" :style="frameSize" @wheel="onMouseWheel" />
+  <div ref="editorEl" :style="frameSize" @wheel="diagramStore.handleMouseWheel" />
 </template>
 
 <script setup lang="ts">
@@ -52,14 +52,14 @@ onBeforeMount(() => {
   diagramStore.paper?.remove()
 
   window.removeEventListener('mousemove', updateMousePosition)
-  window.removeEventListener('wheel', diagramStore.handleMouseWheel)
+  // window.removeEventListener('wheel', diagramStore.handleMouseWheel)
 })
 
 onMounted(() => {
   initiateDiagram()
 
   window.addEventListener('mousemove', updateMousePosition)
-  window.addEventListener('wheel', diagramStore.handleMouseWheel)
+  // window.addEventListener('wheel', diagramStore.handleMouseWheel)
 })
 
 function updateMousePosition(event: MouseEvent) {
@@ -152,13 +152,6 @@ function initiateDiagram() {
       panControllerValues.value.isOverElement = false
     }
   })
-}
-
-function onMouseWheel(_event: WheelEvent) {
-  // let { deltaY } = event
-  // let { sx, sy } = diagramStore.paper.scale()
-  // let scaleSignal = isNegative(deltaY) ? -0.1 : 0.1
-  // diagramStore.paper.scale(sx + scaleSignal, sy + scaleSignal)
 }
 </script>
 
