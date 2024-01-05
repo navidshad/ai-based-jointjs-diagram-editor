@@ -8,6 +8,7 @@ import zodToJsonSchema from 'zod-to-json-schema'
 import type { dia } from 'jointjs'
 
 import {
+  extractAndCreateGroups,
   mapJointJsToSimplifiedCellsSchema,
   mapSimplifiedCellsSchemaToJointJs,
   simplifiedCellsSchema,
@@ -40,4 +41,5 @@ export function manipulateDiagram(description: string, cells: dia.Cell[]) {
     })
     .then(({ text }) => extractJson(text) as SimplifiedCellsType)
     .then((data) => mapSimplifiedCellsSchemaToJointJs(data))
+    .then((data) => extractAndCreateGroups(data.cells))
 }
