@@ -18,6 +18,10 @@ export class HierarchyItem {
   element: dia.Element
   toolsViewList: ToolsViewItem[]
 
+  static is(item: HierarchyItem): item is HierarchyItem {
+    return item.element.prop('data/type') !== 'group'
+  }
+
   constructor(data: {
     id: string
     name: string
@@ -41,5 +45,47 @@ export class HierarchyItem {
   changeLabel(name: string) {
     this.name = name
     this.element.attr('label/text', this.name)
+  }
+}
+
+export class HierarchyGroupItem extends HierarchyItem {
+  private previousPosition: dia.Point
+
+  static is(item: HierarchyItem): item is HierarchyGroupItem {
+    return item.element.prop('data/type') == 'group'
+  }
+
+  constructor(data: {
+    id: string
+    name: string
+    element: dia.Element
+    toolsViewList: ToolsViewItem[]
+  }) {
+    super(data)
+
+    this.previousPosition = this.element.position()
+
+    // @ts-ignore
+    this.element.on('change:position', this.onPositionChanged, this)
+  }
+
+  get ChieldsId() {
+    return this.element.prop('data/embeds') || []
+  }
+
+  private onPositionChanged(_element: dia.Element, position: dia.Point) {
+    const xd = position.x - this.previousPosition.x
+    const yd = position.y - this.previousPosition.y
+    this.previousPosition = position
+
+    for (let i = 0; i < this.ChieldsId.length; i++) {
+      const id = this.ChieldsId[i]
+
+      const child = this.element.graph.getCell(id) as dia.Element
+      if (!child) continue
+
+      // const childPosition = child.position()
+      child.translate(xd, yd)
+    }
   }
 }
