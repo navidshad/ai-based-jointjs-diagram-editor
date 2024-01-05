@@ -53,12 +53,6 @@ export default defineComponent({
     return {
       tab: 'ai'
     }
-  },
-
-  computed: {
-    width() {
-      return 400
-    }
   }
 })
 </script>
