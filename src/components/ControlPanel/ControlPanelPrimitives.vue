@@ -113,28 +113,36 @@
 import { useDiagramStore } from '@/stores/diagram'
 import { type PrimitiveType, primitiveShapes } from '@/static/primitives-initial'
 import { ref } from 'vue'
+import { watch } from 'vue'
 
 const diagramStore = useDiagramStore()
 const selectedShape = ref<PrimitiveType | 'none'>('none')
-let isCreating = false
+let isCreating = ref(false)
 let mouseStart = { x: 0, y: 0, id: '' }
+
+watch(isCreating, () => {
+  diagramStore.isViewPortLocked = isCreating.value
+})
 
 function onSelectShape(type: string) {
   selectedShape.value = type as any
+
+  // reset viewport scale
+  diagramStore.paper.value.scale(1)
 
   if (type === 'none') return
 
   mouseStart = { x: 0, y: 0, id: '' }
 
-  diagramStore.paper.on('blank:pointerdown', onDragStart)
-  diagramStore.paper.on('blank:pointermove', onDragging)
-  diagramStore.paper.on('blank:pointerup', onDragEnd)
+  diagramStore.paper.value.on('blank:pointerdown', onDragStart)
+  diagramStore.paper.value.on('blank:pointermove', onDragging)
+  diagramStore.paper.value.on('blank:pointerup', onDragEnd)
 }
 
 function onDragStart(event: DragEvent) {
-  if (isCreating) return
+  if (isCreating.value) return
 
-  isCreating = true
+  isCreating.value = true
 
   mouseStart = {
     x: event.offsetX,
@@ -143,7 +151,16 @@ function onDragStart(event: DragEvent) {
   }
 
   const shape = primitiveShapes[selectedShape.value]
-  shape.position = { x: mouseStart.x, y: mouseStart.y }
+
+  // get paper position
+  // paper position is the offset of the paper from the top left of the window
+  const { tx, ty } = diagramStore.paper.value.translate()
+
+  shape.position = {
+    x: mouseStart.x - tx,
+    y: mouseStart.y - ty
+  }
+
   shape.id = mouseStart.id
 
   diagramStore.addElementFromJson(shape)
@@ -163,14 +180,14 @@ function onDragging(event: DragEvent) {
 }
 
 function onDragEnd(event: DragEvent) {
-  isCreating = false
+  isCreating.value = false
 
   // @ts-ignore
-  diagramStore.paper.off('blank:pointerdown', onDragStart)
+  diagramStore.paper.value.off('blank:pointerdown', onDragStart)
   // @ts-ignore
-  diagramStore.paper.off('blank:pointermove', onDragging)
+  diagramStore.paper.value.off('blank:pointermove', onDragging)
   // @ts-ignore
-  diagramStore.paper.off('blank:pointerup', onDragEnd)
+  diagramStore.paper.value.off('blank:pointerup', onDragEnd)
 }
 </script>
 

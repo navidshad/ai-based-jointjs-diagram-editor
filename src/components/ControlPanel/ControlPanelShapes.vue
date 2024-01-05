@@ -36,7 +36,7 @@ export default defineComponent({
 
   methods: {
     onDrop(event: DragEvent, img: string = '') {
-      let pos = this.diagramStore.paper.localToPaperPoint(event.clientX, event.clientY)
+      let pos = this.diagramStore.paper.value.localToPaperPoint(event.clientX, event.clientY)
 
       var image = new shapes.standard.Image()
       let title = img.split('/').pop()?.split('_')[0]

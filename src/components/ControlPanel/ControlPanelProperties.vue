@@ -1,17 +1,12 @@
 <template>
   <div class="split h-full">
     <div id="split-0" class="overflow-y-scroll h-full">
-      <!-- @vue-skip -->
-      <ElementProperties v-if="selected != null" :item="selected" />
-    </div>
-
-    <div id="split-1" class="overflow-y-scroll h-full relative">
       <div class="flex justify-end border-b-2 border-t-2 fixed bottom-0 p-2 w-full bg-white z-10">
         <v-btn variant="outlined" density="compact" id="add-custom-image" icon>
           <v-icon :size="16">mdi-image-plus-outline</v-icon>
           <add-custom-image-form activator="#add-custom-image" />
           <v-tooltip location="top center" activator="parent">
-            <span>Add Custome Image</span>
+            <span>Add Custom Image</span>
           </v-tooltip>
         </v-btn>
       </div>
@@ -19,28 +14,32 @@
         <hierarchy @selected="onElementSelected" />
       </div>
     </div>
+
+    <div id="split-1" class="overflow-y-scroll h-full relative">
+      <!-- @vue-skip -->
+      <ElementProperties v-if="selected != null" :itemId="selected" />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import Split from 'split.js'
-import Hierarchy from './Hierarchy.vue'
-import ElementProperties from './ElementProperties.vue'
+import Hierarchy from './ControlPanelPropertiesHierarchy.vue'
+import ElementProperties from './ControlPanelPropertiesElementProperties.vue'
 import { onMounted, ref } from 'vue'
-import type { HierarchyItem } from '@/model/hierarchy.model'
 import AddCustomImageForm from '@/components/ControlPanel/AddCustomImageForm.vue'
 
-const selected = ref<HierarchyItem | null>(null)
+const selected = ref<string | null>(null)
 
 onMounted(() => {
   Split(['#split-0', '#split-1'], {
     direction: 'vertical',
-    sizes: [70, 30]
+    sizes: [30, 70]
   })
 })
 
-function onElementSelected(item: HierarchyItem | null) {
-  selected.value = item
+function onElementSelected(id: string | null | undefined) {
+  selected.value = id || null
 }
 </script>
 

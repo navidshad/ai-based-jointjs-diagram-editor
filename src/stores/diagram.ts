@@ -3,13 +3,34 @@ import type { CustomElementView, Diagram } from '@/types/general'
 import { HierarchyStore } from '@/services/hierarchy-store.service'
 import { dia, elementTools, linkTools, shapes } from 'jointjs'
 import { useConfigStore } from './config'
-import { HierarchyItem, ToolsViewItem } from '@/model/hierarchy.model'
+import { HierarchyGroupItem, HierarchyItem, ToolsViewItem } from '@/model/hierarchy.model'
 import { ref } from 'vue'
+
+class ResizeTool extends elementTools.Control {
+  protected getPosition(view: dia.ElementView): dia.Point {
+    // @ts-ignore
+    const model = view.model
+    const { width, height } = model.size()
+    return { x: width, y: height }
+  }
+
+  protected setPosition(view: dia.ElementView, coordinates: dia.Point): void {
+    // @ts-ignore
+    const model = view.model
+    model.resize(Math.max(coordinates.x, 1), Math.max(coordinates.y, 1))
+  }
+}
 
 export const useDiagramStore = defineStore('diagram', () => {
   const hierarchyStore = new HierarchyStore()
   const graph = new dia.Graph([], { cellNamespace: shapes })
-  const paper = ref<dia.Paper>(new dia.Paper({}))
+  const paper = {
+    value: new dia.Paper({})
+  }
+
+  function addPaper(options: dia.Paper.Options) {
+    paper.value = new dia.Paper(options)
+  }
 
   //
   // Global graph events
@@ -28,18 +49,19 @@ export const useDiagramStore = defineStore('diagram', () => {
       configStore.updateParentWindowWithGraph(graph.toJSON())
     }
   }
+  // End global graph events
+  //
 
   //
-  // End global graph events
-
-  function addPaper(options: dia.Paper.Options) {
-    paper.value = new dia.Paper(options)
-  }
+  // Data Insertion
+  //
 
   function insertDiagramData(data: Diagram | string) {
     if (typeof data == 'string') {
       data = JSON.parse(data)
     }
+
+    graph.clear()
 
     try {
       graph.fromJSON(data)
@@ -65,6 +87,17 @@ export const useDiagramStore = defineStore('diagram', () => {
     addStandardToolsViewsForElement(element)
   }
 
+  function addLink(source: dia.Element, target: dia.Element) {
+    const link = new shapes.standard.Link()
+
+    link.source(source)
+    link.target(target)
+
+    link.addTo(graph)
+
+    addStandardToolsViewsForLink(link)
+  }
+
   function addElementFromJson(json: any) {
     if (typeof json == 'string') {
       json = JSON.parse(json)
@@ -80,10 +113,39 @@ export const useDiagramStore = defineStore('diagram', () => {
   }
 
   function addStandardToolsViewsForElement(element: dia.Element) {
-    const boundaryTool = new elementTools.Boundary()
+    const tools: dia.ToolView[] = [
+      // Shows boundary box around selected element
+      new elementTools.Boundary()
+    ]
+
+    // if image
+    // Add size controller for selected element
+    if (element.attr('image/xlinkHref')) {
+      tools.push(
+        new ResizeTool({
+          selector: 'image',
+          handleAttributes: {
+            fill: '#4666E5'
+          }
+        })
+      )
+    }
+
+    // if primitive
+    // Add size controller for selected element
+    if (element.attr('body/fill')) {
+      tools.push(
+        new ResizeTool({
+          selector: 'body',
+          handleAttributes: {
+            fill: '#4666E5'
+          }
+        })
+      )
+    }
 
     const toolsView = new dia.ToolsView({
-      tools: [boundaryTool]
+      tools: tools
     })
 
     const elementView: CustomElementView = element.findView(
@@ -95,14 +157,27 @@ export const useDiagramStore = defineStore('diagram', () => {
 
     elementView.id = element.id.toString()
 
-    const hierarchyItem = new HierarchyItem({
-      id: elementView.id,
-      name: element.attr('label/text'),
-      element: element,
-      toolsViewList: [new ToolsViewItem('hover', toolsView)]
-    })
+    const isGroup = element.prop('data/type') == 'group'
 
-    hierarchyStore.add(hierarchyItem)
+    if (isGroup) {
+      hierarchyStore.add(
+        new HierarchyGroupItem({
+          id: elementView.id,
+          name: element.attr('label/text'),
+          element: element,
+          toolsViewList: [new ToolsViewItem('hover', toolsView)]
+        })
+      )
+    } else {
+      hierarchyStore.add(
+        new HierarchyItem({
+          id: elementView.id,
+          name: element.attr('label/text'),
+          element: element,
+          toolsViewList: [new ToolsViewItem('hover', toolsView)]
+        })
+      )
+    }
 
     // activate wrap text
     element.attr('label/textWrap', {
@@ -120,6 +195,51 @@ export const useDiagramStore = defineStore('diagram', () => {
 
     link.findView(paper.value as dia.Paper).addTools(tools)
   }
+  // End of Data Insertion
+  //
+
+  //
+  // Viewport controller methods
+  //
+  const isViewPortLocked = ref(false)
+  //
+  // Method to set the viewport position to specified x and y coordinates
+  function setViewportPosition(x: number, y: number) {
+    if (isViewPortLocked.value) {
+      return
+    }
+
+    const { tx, ty } = paper.value.translate()
+    // Uses JointJS's translate method to move the paper
+    paper.value.translate(tx + x, ty + y)
+  }
+
+  // Method to set a specific zoom level
+  function setZoomLevel(zoomLevel: number) {
+    // Set both x and y scale factors to the specified zoom level
+    paper.value.scale(zoomLevel, zoomLevel)
+  }
+
+  function handleMouseWheel(event: WheelEvent) {
+    event.preventDefault() // Prevent default scrolling behavior
+
+    const currentScale = paper.value.scale() // Get the current scale
+    const zoomFactor = 0.1 // Define how much to zoom in or out
+    let newScale = 0
+
+    if (event.deltaY < 0) {
+      // Mouse wheel moved up, zoom in
+      newScale = Math.min(currentScale.sx + zoomFactor, 20) // Set a max zoom limit
+    } else {
+      // Mouse wheel moved down, zoom out
+      newScale = Math.max(currentScale.sx - zoomFactor, 0.1) // Set a min zoom limit
+    }
+
+    // Apply the new scale
+    paper.value.scale(newScale, newScale)
+  }
+  // End of Viewport controller methods
+  //
 
   return {
     graph,
@@ -127,10 +247,16 @@ export const useDiagramStore = defineStore('diagram', () => {
     hierarchyStore,
 
     insertDiagramData,
+    addLink,
     addPaper,
     addElement,
     addElementFromJson,
     addStandardToolsViewsForElement,
-    addStandardToolsViewsForLink
+    addStandardToolsViewsForLink,
+
+    setViewportPosition,
+    setZoomLevel,
+    isViewPortLocked,
+    handleMouseWheel
   }
 })
