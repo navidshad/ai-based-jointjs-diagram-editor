@@ -8,13 +8,16 @@
       <!-- ACTIONBAR
   -->
 
-      <action-header-component class="w-full absolute left-0 top-0 z-10" />
+      <action-header-component
+        class="w-full absolute left-0 top-0 z-10"
+        :style="{ width: width + 'px' }"
+      />
     </template>
 
-    <template #second="{ height }">
+    <template #second="{ width }">
       <!-- CONTROL PANEL DRAWER
   -->
-      <control-panel-component :activeSlot="activePanel" :style="{ height: height + 'px' }" />
+      <control-panel-component :activeSlot="activePanel" :width="width" />
     </template>
   </splitter-component>
 
