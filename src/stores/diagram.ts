@@ -44,6 +44,8 @@ export const useDiagramStore = defineStore('diagram', () => {
       data = JSON.parse(data)
     }
 
+    graph.clear()
+
     try {
       graph.fromJSON(data)
       hierarchyStore.clear()

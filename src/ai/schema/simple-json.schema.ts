@@ -186,6 +186,12 @@ export function extractAndCreateGroups(cells: Array<dia.Cell>) {
       noneConnectable: true
     })
 
+    try {
+      rect.embed(group.cells)
+    } catch (error) {
+      console.log(error)
+    }
+
     if (group.cells.length > 1) {
       cells = [rect, ...cells]
     }
