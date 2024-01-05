@@ -3,7 +3,7 @@ import type { CustomElementView, Diagram } from '@/types/general'
 import { HierarchyStore } from '@/services/hierarchy-store.service'
 import { dia, elementTools, linkTools, shapes } from 'jointjs'
 import { useConfigStore } from './config'
-import { HierarchyItem, ToolsViewItem } from '@/model/hierarchy.model'
+import { HierarchyGroupItem, HierarchyItem, ToolsViewItem } from '@/model/hierarchy.model'
 import { ref } from 'vue'
 
 class ResizeTool extends elementTools.Control {
@@ -157,14 +157,27 @@ export const useDiagramStore = defineStore('diagram', () => {
 
     elementView.id = element.id.toString()
 
-    const hierarchyItem = new HierarchyItem({
-      id: elementView.id,
-      name: element.attr('label/text'),
-      element: element,
-      toolsViewList: [new ToolsViewItem('hover', toolsView)]
-    })
+    const isGroup = element.prop('data/type') == 'group'
 
-    hierarchyStore.add(hierarchyItem)
+    if (isGroup) {
+      hierarchyStore.add(
+        new HierarchyGroupItem({
+          id: elementView.id,
+          name: element.attr('label/text'),
+          element: element,
+          toolsViewList: [new ToolsViewItem('hover', toolsView)]
+        })
+      )
+    } else {
+      hierarchyStore.add(
+        new HierarchyItem({
+          id: elementView.id,
+          name: element.attr('label/text'),
+          element: element,
+          toolsViewList: [new ToolsViewItem('hover', toolsView)]
+        })
+      )
+    }
 
     // activate wrap text
     element.attr('label/textWrap', {
