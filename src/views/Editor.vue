@@ -1,5 +1,5 @@
 <template>
-  <splitter-component :sizes="[80, 20]">
+  <splitter-component :sizes="sizes">
     <template #first="{ width, height }">
       <!-- DIAGRAM CANVAS
   -->
@@ -20,40 +20,29 @@
       <control-panel-component :width="width" />
     </template>
   </splitter-component>
-
-  <!-- MENU TOGGLES
-   -->
-  <!-- <teleport to="#diagram-panel-toggle">
-    <v-btn
-      class="rounded-sm"
-      variant="flat"
-      icon="m"
-      size="small"
-      :color="activePanel ? 'blue' : 'blue-grey-lighten-5'"
-      @click="activePanel = !activePanel"
-    >
-      <v-icon
-        size="15"
-        :icon="!activePanel ? 'mdi-table-cog' : 'mdi-close'"
-        :color="!activePanel ? 'black' : 'white'"
-      />
-      <v-tooltip location="bottom" activator="parent">
-        <span>Toggle control panel</span>
-      </v-tooltip>
-    </v-btn>
-  </teleport> -->
 </template>
 
 <script setup lang="ts">
-import { inject, ref } from 'vue'
 import DiagramCanvas from '@/components/DiagramCanvas.vue'
 import ActionHeaderComponent from '@/components/ActionHeader.vue'
 import ControlPanelComponent from '@/components/ControlPanel/ControlPanel.vue'
 import SplitterComponent from '@/components/layout/SplitterView.vue'
+import { useConfigStore } from '@/stores/config'
+import { ref, watch } from 'vue'
 
-const bodySize = inject<{ width: number; height: number }>('bodySize')
+const configStore = useConfigStore()
 
-const activePanel = ref(true)
+const sizes = ref([70, 30])
+watch(
+  () => configStore.settings.toggle_control_panel,
+  (val) => {
+    if (val == true) {
+      sizes.value = [70, 30]
+    } else {
+      sizes.value = [100, 0]
+    }
+  }
+)
 </script>
 
 <style>

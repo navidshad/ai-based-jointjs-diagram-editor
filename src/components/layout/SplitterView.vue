@@ -34,8 +34,7 @@ let sizes = [50, 50]
 let fullScreenOnInit = ''
 let minSize = 100
 let expandedSide = null
-let storageKey = ''
-let allowStoreSize = false
+
 let firstEl
 let secondEL
 
@@ -43,12 +42,7 @@ function createSplitterInstance(minSize, initSizes, isHorizontal, frameHtmlEleme
   splitInstance = Split([firstEl, secondEL], {
     minSize: minSize,
     sizes: initSizes,
-    direction: isHorizontal ? 'horizontal' : 'vertical',
-    onDragEnd: function (sizes) {
-      if (allowStoreSize) {
-        localStorage.setItem(storageKey, JSON.stringify(sizes))
-      }
-    }
+    direction: isHorizontal ? 'horizontal' : 'vertical'
   })
 
   frameHtmlElement
@@ -73,9 +67,7 @@ export default {
 
       resizeSplitterColumns: (newSizes = [50, 50]) => {
         splitInstance.destroy()
-
         createSplitterInstance(minSize, newSizes, this.isHorizontal, self.$refs.frame)
-        // this.setListeners()
       },
 
       firstHeight: computed(() => this.firstHeight),
@@ -90,13 +82,8 @@ export default {
     firstColumnClass: { type: String },
     secondColumnClass: { type: String },
 
-    // Splitter can save user split change, but it need a specific key
-    // for use it on local storage
-    storageKey: { type: String, default: 'splitterSizes' },
-    allowStoreSize: { type: Boolean, default: true },
-
     // An array contains 2 number for left and right width
-    minSize: { default: 300 },
+    minSize: { default: 0 },
 
     // Initial sizes of each element in percents or CSS values
     sizes: { default: () => [80, 20] },
@@ -113,7 +100,19 @@ export default {
 
   watch: {
     isHorizontal() {
-      this.reCreateSplitter()
+      if (splitInstance) {
+        splitInstance.destroy()
+      }
+
+      this.initialize()
+    },
+
+    sizes() {
+      if (splitInstance) {
+        splitInstance.destroy()
+      }
+
+      this.initialize()
     }
   },
 
@@ -130,9 +129,6 @@ export default {
   },
 
   computed: {
-    normalizedStorageKey() {
-      return this.isHorizontal ? 'horiz-' : 'vert-' + this.storageKey
-    },
     splitInstance() {
       return splitInstance
     },
@@ -147,50 +143,38 @@ export default {
   },
 
   mounted() {
-    self = this
-    sizes = this.sizes
-    fullScreenOnInit = this.fullScreenOnInit
-    minSize = this.minSize
-    storageKey = this.normalizedStorageKey
-    allowStoreSize = this.allowStoreSize
-    firstEl = this.$refs.first
-    secondEL = this.$refs.second
-
-    if (storageKey) {
-      let storedValue = localStorage.getItem(storageKey)
-
-      try {
-        sizes = JSON.parse(storedValue) || this.sizes
-      } catch (error) {
-        sizes = this.sizes
-      }
-    }
-
-    createSplitterInstance(minSize, sizes, this.isHorizontal, this.$refs.frame)
-
-    if (this.fullScreenOnInit) {
-      this.expandSplitterColumns(this.fullScreenOnInit)
-    }
-
-    this.onResized()
-
-    // https://developer.mozilla.org/en-US/docs/Web/API/Resize_Observer_API
-    this.resizeObserve = new ResizeObserver(this.onResized)
-    this.resizeObserve.observe(this.$refs.first)
+    this.initialize()
   },
 
   methods: {
+    initialize() {
+      self = this
+      sizes = this.sizes
+      fullScreenOnInit = this.fullScreenOnInit
+      minSize = this.minSize
+
+      firstEl = this.$refs.first
+      secondEL = this.$refs.second
+
+      createSplitterInstance(minSize, sizes, this.isHorizontal, this.$refs.frame)
+
+      if (this.fullScreenOnInit) {
+        this.expandSplitterColumns(this.fullScreenOnInit)
+      }
+
+      this.onResized()
+
+      // https://developer.mozilla.org/en-US/docs/Web/API/Resize_Observer_API
+      this.resizeObserve = new ResizeObserver(this.onResized)
+      this.resizeObserve.observe(this.$refs.first)
+    },
+
     onResized() {
       this.firstWidth = this.$refs.first.clientWidth
       this.firstHeight = this.$refs.first.clientHeight
 
       this.secondWidth = this.$refs.second.clientWidth
       this.secondHeight = this.$refs.second.clientHeight
-    },
-
-    reCreateSplitter() {
-      splitInstance.destroy()
-      createSplitterInstance(minSize, sizes, this.isHorizontal, this.$refs.frame)
     },
 
     // Chields can inject this method and them use it for

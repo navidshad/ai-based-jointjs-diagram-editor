@@ -30,7 +30,7 @@ This a Jointjs Diagram Editor that generates json base diagrams, then you can us
 - [x] Create and Manipulate Diagram by GPT-4.
 - [ ] Group a sort of elements (only in ai result for now).
 
-## Ifram & Communication
+## Iframe & Communication
 This Editor is being used by few other KodeKloud designer apps like Quiz-Designer through an iframe, they talk to each other using `message` event. so if you want to use this editor in your application, you need to use it in an iframe and communicate with it using `message` event. the data structure of the message is as follow:
 
 | Property  | value           | Description                      |
@@ -46,9 +46,10 @@ This Editor is being used by few other KodeKloud designer apps like Quiz-Designe
 ## Iframe Settings
 You can setup the editor though query params of the iframe url. the following table shows the available query params.
 
-| Property            | value     | Description                                        |
-| ------------------- | --------- | -------------------------------------------------- |
-| `update_per_change` | `Boolean` | Receive diagram update per any change on its graph |
+| Property               | value     | Description                                        |
+| ---------------------- | --------- | -------------------------------------------------- |
+| `update_per_change`    | `Boolean` | Receive diagram update per any change on its graph |
+| `toggle_control_panel` | `Boolean` | Show/Hide control panel                            |
 
 ## Recommended IDE Setup
 
@@ -85,35 +86,4 @@ npm run dev
 
 ```sh
 npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Run End-to-End Tests with [Playwright](https://playwright.dev)
-
-```sh
-# Install browsers for the first run
-npx playwright install
-
-# When testing on CI, must build the project first
-npm run build
-
-# Runs the end-to-end tests
-npm run test:e2e
-# Runs the tests only on Chromium
-npm run test:e2e -- --project=chromium
-# Runs the tests of a specific file
-npm run test:e2e -- tests/example.spec.ts
-# Runs the tests in debug mode
-npm run test:e2e -- --debug
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```

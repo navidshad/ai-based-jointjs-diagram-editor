@@ -4,10 +4,13 @@ import type { GraphEvent, Settings } from '@/types/iframe-events'
 import { clone } from '@/helpers/object'
 
 export const useConfigStore = defineStore('config', () => {
-  const settings = ref<Settings>({ update_per_change: false })
+  const settings = ref<Settings>({
+    update_per_change: false,
+    toggle_control_panel: true
+  })
 
   const updatePerChange = computed({
-    get: () => settings.value.update_per_change,
+    get: () => settings.value.update_per_change || false,
     set: (value: boolean) => (settings.value.update_per_change = value)
   })
 
@@ -23,7 +26,11 @@ export const useConfigStore = defineStore('config', () => {
   }
 
   function insertSettings(settingsData: Settings) {
-    settings.value = settingsData
+    for (const key in settingsData) {
+      if (key in settings.value) {
+        settings.value[key as keyof Settings] = settingsData[key as keyof Settings]
+      }
+    }
   }
 
   return {
