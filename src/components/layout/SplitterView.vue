@@ -83,7 +83,7 @@ export default {
     secondColumnClass: { type: String },
 
     // An array contains 2 number for left and right width
-    minSize: { default: 0 },
+    minSize: { default: 120 },
 
     // Initial sizes of each element in percents or CSS values
     sizes: { default: () => [80, 20] },

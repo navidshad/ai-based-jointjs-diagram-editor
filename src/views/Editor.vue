@@ -1,5 +1,5 @@
 <template>
-  <splitter-component :sizes="sizes">
+  <splitter-component :sizes="sizes" :minSize="minSize">
     <template #first="{ width, height }">
       <!-- DIAGRAM CANVAS
   -->
@@ -33,12 +33,16 @@ import { ref, watch } from 'vue'
 const configStore = useConfigStore()
 
 const sizes = ref([70, 30])
+const minSize = ref(300)
+
 watch(
   () => configStore.settings.toggle_control_panel,
   (val) => {
     if (val == true) {
       sizes.value = [70, 30]
+      minSize.value = 300
     } else {
+      minSize.value = 0
       sizes.value = [100, 0]
     }
   }
