@@ -12,11 +12,20 @@ window.onmessage = (event) => {
   if (event.source === window) return
 
   try {
+    //
+    // Event: Graph
+    // Description: receive diagram data from iframe and insert it into the store.
+    //
     if (eventData.type === 'graph') {
       const { payload } = eventData as GraphEvent
       const diagramData = typeof payload == 'string' ? JSON.parse(payload) : payload
       useDiagramStore().insertDiagramData(diagramData)
-    } else if (eventData.type === 'settings') {
+    }
+    //
+    // Event: Settings
+    // Description: receive settings data from iframe and insert it into the store.
+    //
+    else if (eventData.type === 'settings') {
       const settingsEvent = eventData as SettingsEvent
       useConfigStore().insertSettings(settingsEvent.payload)
     }

@@ -13,5 +13,6 @@ export interface SettingsEvent {
 }
 
 export interface Settings {
-  update_per_change: boolean
+  update_per_change?: boolean
+  toggle_control_panel?: boolean
 }
