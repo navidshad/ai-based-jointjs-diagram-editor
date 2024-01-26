@@ -45,7 +45,7 @@ export const useDiagramStore = defineStore('diagram', () => {
 
   const configStore = useConfigStore()
   function onChange() {
-    if (configStore.updatePerChange) {
+    if (configStore.updatePerChange == true) {
       configStore.updateParentWindowWithGraph(graph.toJSON())
     }
   }

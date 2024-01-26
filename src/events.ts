@@ -8,6 +8,9 @@ import type { GraphEvent, SettingsEvent } from './types/iframe-events'
 window.onmessage = (event) => {
   const eventData = event.data
 
+  const configStore = useConfigStore()
+  const diagramStore = useDiagramStore()
+
   // check if source and target is the same window
   if (event.source === window) return
 
@@ -19,7 +22,8 @@ window.onmessage = (event) => {
     if (eventData.type === 'graph') {
       const { payload } = eventData as GraphEvent
       const diagramData = typeof payload == 'string' ? JSON.parse(payload) : payload
-      useDiagramStore().insertDiagramData(diagramData)
+      configStore.ignoreNextChangeToUpdatePerChange = true
+      diagramStore.insertDiagramData(diagramData)
     }
     //
     // Event: Settings
@@ -27,7 +31,7 @@ window.onmessage = (event) => {
     //
     else if (eventData.type === 'settings') {
       const settingsEvent = eventData as SettingsEvent
-      useConfigStore().insertSettings(settingsEvent.payload)
+      configStore.insertSettings(settingsEvent.payload)
     }
   } catch (e) {
     console.error('Error while parsing event data', e)
