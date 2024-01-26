@@ -9,6 +9,8 @@ export const useConfigStore = defineStore('config', () => {
     toggle_control_panel: true
   })
 
+  const ignoreNextChangeToUpdatePerChange = ref(false)
+
   const updatePerChange = computed({
     get: () => settings.value.update_per_change || false,
     set: (value: boolean) => (settings.value.update_per_change = value)
@@ -21,6 +23,11 @@ export const useConfigStore = defineStore('config', () => {
   // Methods
   //
   function updateParentWindowWithGraph(data: GraphEvent['payload']) {
+    if (ignoreNextChangeToUpdatePerChange.value) {
+      ignoreNextChangeToUpdatePerChange.value = false
+      return
+    }
+
     const event: GraphEvent = { type: 'graph', payload: clone(data) }
     window.parent.postMessage(event, '*')
   }
@@ -33,12 +40,19 @@ export const useConfigStore = defineStore('config', () => {
     }
   }
 
+  function updateParentWindowWithReadySignal() {
+    const event = { type: 'ready' }
+    window.parent.postMessage(event, '*')
+  }
+
   return {
     settings,
     configKey,
     updatePerChange,
+    ignoreNextChangeToUpdatePerChange,
 
     updateParentWindowWithGraph,
+    updateParentWindowWithReadySignal,
     insertSettings
   }
 })
