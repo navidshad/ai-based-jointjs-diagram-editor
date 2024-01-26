@@ -45,6 +45,14 @@ export const useConfigStore = defineStore('config', () => {
     window.parent.postMessage(event, '*')
   }
 
+  function updateParentWindowWithElementTransaction(
+    type: 'select' | 'add' | 'remove',
+    element: any
+  ) {
+    const event = { type: `element-${type}`, payload: element }
+    window.parent.postMessage(event, '*')
+  }
+
   return {
     settings,
     configKey,
@@ -53,6 +61,7 @@ export const useConfigStore = defineStore('config', () => {
 
     updateParentWindowWithGraph,
     updateParentWindowWithReadySignal,
+    updateParentWindowWithElementTransaction,
     insertSettings
   }
 })
