@@ -6,7 +6,7 @@ import { vuetify } from '@/plugins/vuetify'
 
 import App from './App.vue'
 import router from './router'
-import './events'
+import { registerGlobalEmits, registerGlobalEvents } from './events'
 import { useConfigStore } from './stores/config'
 
 const pinia = createPinia()
@@ -17,6 +17,10 @@ app.use(router)
 app.use(vuetify)
 
 app.mount('#app')
+
+// Register global events and emits.
+registerGlobalEmits()
+registerGlobalEvents()
 
 // Send ready signal to parent window.
 setTimeout(() => {
