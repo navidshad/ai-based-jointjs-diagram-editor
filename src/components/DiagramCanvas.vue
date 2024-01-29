@@ -7,7 +7,7 @@ import { g } from 'jointjs'
 import 'jointjs/dist/joint.css'
 
 import { type CustomElementView } from '@/types/general'
-import { ref, computed, watch, onMounted, onBeforeMount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 
 import { useDiagramStore } from '@/stores/diagram'
 
@@ -47,19 +47,17 @@ const panControllerValues = ref({
 
 watch(props, () => diagramStore.paper.value?.setDimensions(props.width, props.height))
 
-onBeforeMount(() => {
+onBeforeUnmount(() => {
   // @ts-ignore
   diagramStore.paper.value?.remove()
 
   window.removeEventListener('mousemove', updateMousePosition)
-  // window.removeEventListener('wheel', diagramStore.handleMouseWheel)
 })
 
 onMounted(() => {
   initiateDiagram()
 
   window.addEventListener('mousemove', updateMousePosition)
-  // window.addEventListener('wheel', diagramStore.handleMouseWheel)
 })
 
 function updateMousePosition(event: MouseEvent) {
@@ -138,6 +136,9 @@ function initiateDiagram() {
       }
     },
 
+    //
+    // Panning
+    //
     'blank:pointermove': function (_evt, _x, _y) {
       const { x, y } = panControllerValues.value.mousePosition
       let dx = x - (panControllerValues.value.previousMousePosition.x || 0)
@@ -147,12 +148,16 @@ function initiateDiagram() {
         diagramStore.setViewportPosition(dx, dy)
       }
     },
+
     'element:pointermove': function (_elementView, _evt, _x, _y) {
       panControllerValues.value.isOverElement = true
     },
+
     'element:mouseleave': function (_elementView, _evt) {
       panControllerValues.value.isOverElement = false
     }
+    //
+    // End of panning
   })
 }
 </script>
