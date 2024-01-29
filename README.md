@@ -33,11 +33,14 @@ This a Jointjs Diagram Editor that generates json base diagrams, then you can us
 ## Iframe & Communication
 This Editor is being used by few other KodeKloud designer apps like Quiz-Designer through an iframe, they talk to each other using `message` event. so if you want to use this editor in your application, you need to use it in an iframe and communicate with it using `message` event. the data structure of the message is as follow:
 
-| Events     | Examples                                     | Stream Type  | Description                    |
-| ---------- | -------------------------------------------- | ------------ | ------------------------------ |
-| `ready`    | `{type:"ready"}`                             | receive      | To Send ready signal to parent |
-| `graph`    | `{type:"graph", payload: {cells:[]}}`        | send/receive | To exchange diagram data       |
-| `settings` | `{type:"settings", payload: SettingsObject}` | send         | To set editor settings         |
+| Events           | Examples                                            | Stream Type  | Description                    |
+| ---------------- | --------------------------------------------------- | ------------ | ------------------------------ |
+| `ready`          | `{type:"ready"}`                                    | receive      | To Send ready signal to parent |
+| `graph`          | `{type:"graph", payload: {cells:[]}}`               | send/receive | To exchange diagram data       |
+| `settings`       | `{type:"settings", payload: SettingsObject}`        | send         | To set editor settings         |
+| `element-add`    | `{type:"element-add", payload: {ElementObject}`     | receive      | To know when element added     |
+| `element-remove` | `{type:"element-del", payload: {id: string}}`       | receive      | To know when element removed   |
+| `element-select` | `{type:"element-update", payload: {ElementObject}}` | receive      | To know when element selected  |
 
 ## Iframe `SettingsObject`
 You can setup the editor though query params of the iframe url. the following table shows the available query params.
