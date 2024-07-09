@@ -5,7 +5,7 @@ export const orgId = import.meta.env.VITE_OPENAI_ORG_ID
 
 export const gpt4Model = new OpenAIChat({
   openAIApiKey,
-  modelName: 'gpt-4'
+  modelName: 'gpt-4o'
 })
 
 gpt4Model.organization = orgId
