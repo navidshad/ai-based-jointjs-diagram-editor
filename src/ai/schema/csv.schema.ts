@@ -35,6 +35,8 @@ export const simplifiedCellsCSVSchema = `
 function cleanString(str: string) {
   const list = ['"', '/', '\\', '\n', '\r']
 
+  if (!str) return str
+
   for (const item of list) {
     while (str.includes(item)) {
       str = str.replace(item, '')
@@ -52,7 +54,7 @@ export function parseCSV(csv: string) {
     const obj: Record<string, string> = {}
     row.forEach((value, index) => {
       value = cleanString(value)
-      header[index] = cleanString(header[index])
+      header[index] = cleanString(header[index]) || ''
 
       obj[header[index].trim()] = value.trim()
     })

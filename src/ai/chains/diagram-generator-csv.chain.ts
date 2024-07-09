@@ -7,6 +7,7 @@ import {
   extractAndCreateGroups,
   mapSimplifiedCellsSchemaToJointJs
 } from '../schema/simple-json.schema'
+import { extractCSV } from '../helpers/json'
 
 const chatTemplate = ChatPromptTemplate.fromMessages([
   [
@@ -34,6 +35,7 @@ export function generateDiagramWithCSV(description: string) {
       schema: simplifiedCellsCSVSchema
     })
     .then(({ text }) => text)
+    .then((data) => extractCSV(data))
     .then((data) => mapCSVToSimplified(data))
     .then((data) => mapSimplifiedCellsSchemaToJointJs(data))
     .then((data) => extractAndCreateGroups(data.cells))
