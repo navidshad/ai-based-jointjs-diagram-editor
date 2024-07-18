@@ -32,7 +32,11 @@ const chatTemplate = ChatPromptTemplate.fromMessages([
 
 export const manipulationChain = new LLMChain({ llm: gpt4Model, prompt: chatTemplate })
 
-export function manipulateDiagram(description: string, cells: dia.Cell[]) {
+export function manipulateDiagram(
+  description: string,
+  cells: dia.Cell[],
+  options: { selectIcon: boolean }
+) {
   return manipulationChain
     .invoke({
       diagram_description: description,
@@ -40,6 +44,6 @@ export function manipulateDiagram(description: string, cells: dia.Cell[]) {
       schema: JSON.stringify(zodToJsonSchema(simplifiedCellsSchema))
     })
     .then(({ text }) => extractJson(text) as SimplifiedCellsType)
-    .then((data) => mapSimplifiedCellsSchemaToJointJs(data))
+    .then((data) => mapSimplifiedCellsSchemaToJointJs(data, options))
     .then((data) => extractAndCreateGroups(data.cells))
 }

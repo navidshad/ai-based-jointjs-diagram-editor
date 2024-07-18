@@ -98,14 +98,17 @@ export function mapJointJsToSimplifiedCellsSchema(cells: Array<dia.Cell>) {
 }
 
 // This function maps the simplified schema to jointjs cells
-export function mapSimplifiedCellsSchemaToJointJs(data: SimplifiedCellsType) {
+export function mapSimplifiedCellsSchemaToJointJs(
+  data: SimplifiedCellsType,
+  { selectIcon }: { selectIcon: boolean }
+) {
   let cells: Array<dia.Element> = []
 
   // Create cells
   data.cells.forEach((simpleCell) => {
     const icon = selectBestMatchingIcon(simpleCell.title)
 
-    if (icon.length) {
+    if (selectIcon && icon.length) {
       const image = createImageFromSimplifiedCell(simpleCell, icon)
       cells.push(image)
     } else {
