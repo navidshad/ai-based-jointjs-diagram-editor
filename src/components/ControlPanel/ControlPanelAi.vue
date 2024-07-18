@@ -4,8 +4,6 @@
       <v-form v-model:model-value="isValidPrompt" ref="form" fast-fail>
         <v-textarea
           label="Prompt"
-          auto-grow
-          max-rows="30"
           v-model="prompt"
           :loading="isImprovingPrompt"
           :rules="promptRules"
