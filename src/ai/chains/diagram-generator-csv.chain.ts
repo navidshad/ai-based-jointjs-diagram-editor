@@ -28,7 +28,7 @@ const chatTemplate = ChatPromptTemplate.fromMessages([
 
 export const manipulationChain = new LLMChain({ llm: gpt4Model, prompt: chatTemplate })
 
-export function generateDiagramWithCSV(description: string, options: { selectIcon: boolean }) {
+export function generateDiagramWithCSV(description: string, options: { autoSelectIcons: boolean }) {
   return manipulationChain
     .invoke({
       diagram_description: description,

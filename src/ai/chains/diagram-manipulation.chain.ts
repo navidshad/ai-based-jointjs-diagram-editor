@@ -35,7 +35,7 @@ export const manipulationChain = new LLMChain({ llm: gpt4Model, prompt: chatTemp
 export function manipulateDiagram(
   description: string,
   cells: dia.Cell[],
-  options: { selectIcon: boolean }
+  options: { autoSelectIcons: boolean }
 ) {
   return manipulationChain
     .invoke({
