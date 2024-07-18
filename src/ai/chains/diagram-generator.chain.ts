@@ -28,12 +28,15 @@ const chatTemplate = ChatPromptTemplate.fromMessages([
 
 export const manipulationChain = new LLMChain({ llm: gpt4Model, prompt: chatTemplate })
 
-export function generateDiagramWithSimplifiedJSON(description: string) {
+export function generateDiagramWithSimplifiedJSON(
+  description: string,
+  options: { autoSelectIcons: boolean }
+) {
   return manipulationChain
     .invoke({
       diagram_description: description,
       schema: JSON.stringify(zodToJsonSchema(simplifiedCellsSchema))
     })
     .then(({ text }) => extractJson(text) as SimplifiedCellsType)
-    .then((data) => mapSimplifiedCellsSchemaToJointJs(data))
+    .then((data) => mapSimplifiedCellsSchemaToJointJs(data, options))
 }
