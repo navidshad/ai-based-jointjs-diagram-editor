@@ -1,6 +1,6 @@
 <template>
   <section class="overflow-y-auto bg-white h-screen" :style="{ width: width + 'px' }">
-    <v-tabs v-model="tab" align-tabs="center" class="w-full">
+    <v-tabs v-model="tab" align-tabs="center" class="w-full mb-2">
       <v-tab value="properties">Properties</v-tab>
       <v-tab value="primitives">Primitives</v-tab>
       <v-tab value="shapes">Shapes</v-tab>
