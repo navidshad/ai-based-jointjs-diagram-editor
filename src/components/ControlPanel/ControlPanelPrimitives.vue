@@ -1,5 +1,5 @@
 <template>
-  <section class="p-2 flex items-center justify-between flex-wrap">
+  <section class="flex items-center flex-wrap space-x-2">
     <div :class="['shape']" @click="onSelectShape('none')">
       <svg width="100" height="100">
         <rect
@@ -21,6 +21,7 @@
         </text>
       </svg>
     </div>
+
     <!-- Rectangle -->
     <div
       :class="['shape', { 'bg-[#b6e5f5]': selectedShape == 'rectangle' }]"
@@ -101,6 +102,20 @@
         </text>
       </svg>
     </div>
+
+    <!-- Custom Image -->
+    <div
+      :class="['shape', 'w-[100px] h-[100px] flex flex-col justify-center items-center border-2']"
+      id="add-custom-image"
+    >
+      <span>
+        <v-icon :size="16">mdi-image-plus-outline</v-icon>
+      </span>
+
+      <span class="text-[14px] w-[50px]">Custom Image</span>
+
+      <add-custom-image-form activator="#add-custom-image" />
+    </div>
   </section>
 
   <!-- Guide -->
@@ -114,6 +129,7 @@ import { useDiagramStore } from '@/stores/diagram'
 import { type PrimitiveType, primitiveShapes } from '@/static/primitives-initial'
 import { ref } from 'vue'
 import { watch } from 'vue'
+import AddCustomImageForm from '@/components/ControlPanel/AddCustomImageForm.vue'
 
 const diagramStore = useDiagramStore()
 const selectedShape = ref<PrimitiveType | 'none'>('none')
