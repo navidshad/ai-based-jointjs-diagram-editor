@@ -1,25 +1,8 @@
 <template>
-  <section class="flex items-center flex-wrap space-x-2">
+  <section class="flex items-center flex-wrap">
+    <!-- Node -->
     <div :class="['shape']" @click="onSelectShape('none')">
-      <svg width="100" height="100">
-        <rect
-          stroke-width="2"
-          stroke="#000000"
-          fill="white"
-          fill-opacity="0.5"
-          width="100"
-          height="100"
-        />
-        <text
-          font-size="14"
-          xml:space="preserve"
-          text-anchor="middle"
-          fill="#333333"
-          transform="matrix(1,0,0,1,50,50)"
-        >
-          <tspan dy="0.3em" class="v-line">None</tspan>
-        </text>
-      </svg>
+      <span dy="0.3em" class="v-line">None</span>
     </div>
 
     <!-- Rectangle -->
@@ -27,25 +10,10 @@
       :class="['shape', { 'bg-[#b6e5f5]': selectedShape == 'rectangle' }]"
       @click="onSelectShape('rectangle')"
     >
-      <svg width="100" height="100">
-        <rect
-          stroke-width="2"
-          stroke="#000000"
-          fill="#30d0c6"
-          fill-opacity="0.5"
-          width="100"
-          height="100"
-        />
-        <text
-          font-size="14"
-          xml:space="preserve"
-          text-anchor="middle"
-          fill="#333333"
-          transform="matrix(1,0,0,1,50,50)"
-        >
-          <tspan dy="0.3em" class="v-line">Rectangle</tspan>
-        </text>
-      </svg>
+      <span>
+        <v-icon :size="40" class="text-blue-400">mdi-rectangle</v-icon>
+      </span>
+      <span>Rectangle</span>
     </div>
 
     <!-- Circle -->
@@ -53,26 +21,10 @@
       :class="['shape', { 'bg-[#b6e5f5]': selectedShape == 'circle' }]"
       @click="onSelectShape('circle')"
     >
-      <svg width="100" height="100">
-        <circle
-          stroke-width="2"
-          stroke="#333333"
-          fill="#30d0c6"
-          fill-opacity="0.5"
-          cx="50"
-          cy="50"
-          r="50"
-        />
-        <text
-          font-size="14"
-          xml:space="preserve"
-          text-anchor="middle"
-          fill="#333333"
-          transform="matrix(1,0,0,1,50,50)"
-        >
-          <tspan dy="0.3em" class="v-line">Circle</tspan>
-        </text>
-      </svg>
+      <span>
+        <v-icon :size="40" class="text-blue-400">mdi-circle</v-icon>
+      </span>
+      <span>Circle</span>
     </div>
 
     <!-- Ellipse -->
@@ -80,39 +32,19 @@
       :class="['shape', { 'bg-[#b6e5f5]': selectedShape == 'ellipse' }]"
       @click="onSelectShape('ellipse')"
     >
-      <svg width="100" height="100">
-        <ellipse
-          stroke-width="2"
-          stroke="#333333"
-          fill="#30d0c6"
-          fill-opacity="0.5"
-          cx="35"
-          cy="50"
-          rx="35"
-          ry="50"
-        />
-        <text
-          font-size="14"
-          xml:space="preserve"
-          text-anchor="middle"
-          fill="#333333"
-          transform="matrix(1,0,0,1,35,50)"
-        >
-          <tspan dy="0.3em" class="v-line">Ellipse</tspan>
-        </text>
-      </svg>
+      <span>
+        <v-icon :size="40" class="text-blue-400">mdi-ellipse</v-icon>
+      </span>
+      <span dy="0.3em" class="v-line">Ellipse</span>
     </div>
 
     <!-- Custom Image -->
-    <div
-      :class="['shape', 'w-[100px] h-[100px] flex flex-col justify-center items-center border-2']"
-      id="add-custom-image"
-    >
+    <div :class="['shape']" id="add-custom-image" @click="selectedShape = 'none'">
       <span>
-        <v-icon :size="16">mdi-image-plus-outline</v-icon>
+        <v-icon :size="40" class="text-blue-400">mdi-image</v-icon>
       </span>
 
-      <span class="text-[14px] w-[50px]">Custom Image</span>
+      <span class="">Custom Image</span>
 
       <add-custom-image-form activator="#add-custom-image" />
     </div>
@@ -209,6 +141,7 @@ function onDragEnd(event: DragEvent) {
 
 <style lang="scss" scoped>
 .shape {
+  @apply w-[100px] h-[100px] m-1 flex flex-col justify-center items-center border-2 text-[12px];
   padding: 5px;
   transition: all ease 200ms;
   border-radius: 8px;
