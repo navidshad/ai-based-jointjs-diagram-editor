@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { HierarchyItem } from '@/model/hierarchy.model'
 import { useDiagramStore } from '@/stores/diagram'
 import { computed, watch, ref } from 'vue'
 
@@ -18,24 +17,6 @@ const item = computed(() => {
 const isImage = computed(() => {
   return item.value?.element.attr('image') != null
 })
-
-function onGraphChanged() {
-  if (item.value == null) return
-
-  size.value = item.value?.element.size() || { width: 0, height: 0 }
-
-  // if size get less than text wrap, update text wrap
-  if (hasTextWrap.value) {
-    if (textWrap.value.width > size.value.width) {
-      textWrap.value.width = size.value.width
-    }
-    if (textWrap.value.height > size.value.height) {
-      textWrap.value.height = size.value.height
-    }
-
-    updateTextWrap()
-  }
-}
 
 //
 // Properties temp
@@ -59,11 +40,15 @@ watch(
     size.value = item.value?.element.size() || { width: 0, height: 0 }
 
     hasTextWrap.value = item.value?.element.attr('label/textWrap') != null
-    textWrap.value = item.value?.element.attr('label/textWrap') || {
-      width: item.value?.element.size().width,
-      height: item.value?.element.size().height,
-      ellipsis: false
-    }
+    textWrap.value = hasTextWrap.value
+      ? item.value?.element.attr('label/textWrap')
+      : {
+          width: size.value.width,
+          height: size.value.height,
+          ellipsis: false
+        }
+
+    normalizeTextWrap()
   },
   { immediate: true, deep: true }
 )
@@ -100,6 +85,36 @@ watch(
     item.value?.element.attr('body/fill', value)
   }
 )
+
+function onGraphChanged() {
+  if (item.value == null) return
+
+  size.value = item.value?.element.size() || { width: 0, height: 0 }
+  normalizeTextWrap()
+}
+
+function normalizeTextWrap() {
+  // Normalize textWrap
+  if (hasTextWrap.value) {
+    // Check if the textWrap is bigger than the size
+    if (textWrap.value.width > size.value.width) {
+      textWrap.value.width = size.value.width
+    }
+    if (textWrap.value.height > size.value.height) {
+      textWrap.value.height = size.value.height
+    }
+
+    // Check if the textWrap is smaller than the size
+    if (textWrap.value.width < size.value.width) {
+      textWrap.value.width = size.value.width
+    }
+    if (textWrap.value.height < size.value.height) {
+      textWrap.value.height = size.value.height
+    }
+
+    updateTextWrap()
+  }
+}
 
 function updateTextWrap() {
   item.value?.element.attr('label/textWrap', {
