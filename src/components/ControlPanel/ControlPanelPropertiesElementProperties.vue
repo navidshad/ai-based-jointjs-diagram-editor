@@ -8,26 +8,72 @@ const props = defineProps<{
 }>()
 
 const diagramStore = useDiagramStore()
-const label = ref('')
-const color = ref('')
+// @ts-ignore
+diagramStore.graph.on('change', () => onGraphChanged())
+
 const item = computed(() => {
   if (!props.itemId) return null
   return diagramStore.hierarchyStore.find(props.itemId)
 })
-
 const isImage = computed(() => {
   return item.value?.element.attr('image') != null
 })
 
+function onGraphChanged() {
+  if (item.value == null) return
+
+  size.value = item.value?.element.size() || { width: 0, height: 0 }
+
+  // if size get less than text wrap, update text wrap
+  if (hasTextWrap.value) {
+    if (textWrap.value.width > size.value.width) {
+      textWrap.value.width = size.value.width
+    }
+    if (textWrap.value.height > size.value.height) {
+      textWrap.value.height = size.value.height
+    }
+
+    updateTextWrap()
+  }
+}
+
+//
+// Properties temp
+//
+const label = ref('')
+const color = ref('')
+const hasTextWrap = ref(false)
+const textWrap = ref({ width: 0, height: 0, ellipsis: true })
+const size = ref({ width: 0, height: 0 })
+//
+// End Properties temp
+
 watch(
   () => props.itemId,
   (value: string | null) => {
-    if (value) {
-      label.value = item.value?.name as string
-      color.value = item.value?.element.attr('body/fill') as string
+    console.log('props.itemId', value)
+
+    if (!value) return
+    label.value = item.value?.name as string
+    color.value = item.value?.element.attr('body/fill') as string
+    size.value = item.value?.element.size() || { width: 0, height: 0 }
+
+    hasTextWrap.value = item.value?.element.attr('label/textWrap') != null
+    textWrap.value = item.value?.element.attr('label/textWrap') || {
+      width: item.value?.element.size().width,
+      height: item.value?.element.size().height,
+      ellipsis: false
     }
   },
   { immediate: true, deep: true }
+)
+
+watch(
+  () => item.value?.element.size(),
+  (value) => {
+    console.log('item.value?.element.size()', value)
+  },
+  { deep: true }
 )
 
 watch(
@@ -36,6 +82,18 @@ watch(
     item.value?.changeLabel(value)
   }
 )
+
+watch(
+  () => hasTextWrap.value,
+  (value: boolean) => {
+    if (!value) {
+      item.value?.element.attr('label/textWrap', null)
+    } else {
+      updateTextWrap()
+    }
+  }
+)
+
 watch(
   () => color.value,
   (value: string) => {
@@ -43,9 +101,12 @@ watch(
   }
 )
 
-function setZIndex(value: string | number) {
-  // @TODO fix zindex
-  // z-index is the index on the array of elements
+function updateTextWrap() {
+  item.value?.element.attr('label/textWrap', {
+    width: textWrap.value.width,
+    height: textWrap.value.height,
+    ellipsis: textWrap.value.ellipsis
+  })
 }
 
 function setPosition(xValue: string | number, yValue: string | number) {
@@ -58,22 +119,50 @@ function setSize(wValue: string | number, hValue: string | number) {
   wValue = parseInt(wValue.toString())
   hValue = parseInt(hValue.toString())
   item.value?.element.size(wValue, hValue)
-
-  // activate wrap text
-  item.value?.element.attr('label/textWrap', {
-    width: wValue,
-    height: hValue,
-    ellipsis: true
-  })
 }
 </script>
 
 <template>
-  <div class="w-full" v-if="item != null">
+  <div class="w-full p-2" v-if="item != null">
     <v-card variant="plain">
       <!-- <v-card-title>Label</v-card-title> -->
       <v-card-text>
         <v-text-field label="Label" outlined dense class="w-full" v-model:model-value="label" />
+      </v-card-text>
+    </v-card>
+
+    <v-card variant="outlined">
+      <!-- <v-card-title>Label</v-card-title> -->
+      <v-card-text>
+        <v-checkbox v-model="hasTextWrap" label="Activate text wrap" />
+
+        <p class="pb-4">
+          You can wrap the text inside the element by setting the width and hight here.
+        </p>
+
+        <div class="flex space-x-2">
+          <v-text-field
+            :disabled="!hasTextWrap"
+            v-model="textWrap.width"
+            @update:model-value="updateTextWrap"
+            label="Wrap width"
+            type="number"
+          />
+
+          <v-text-field
+            :disabled="!hasTextWrap"
+            :model-value="textWrap.height"
+            @update:model-value="updateTextWrap"
+            label="Wrap height"
+            type="number"
+          />
+        </div>
+
+        <v-checkbox
+          :disabled="!hasTextWrap"
+          v-model="textWrap.ellipsis"
+          label="Add Ellipsis (...) a the end."
+        />
       </v-card-text>
     </v-card>
 
@@ -98,14 +187,14 @@ function setSize(wValue: string | number, hValue: string | number) {
 
         <div class="flex space-x-2">
           <v-text-field
-            :model-value="item.element.size().width"
+            v-model="size.width"
             @update:model-value="setSize($event, item.element.size().height)"
             label="width"
             type="number"
           />
 
           <v-text-field
-            :model-value="item.element.size().height"
+            v-model="size.height"
             @update:model-value="setSize(item.element.size().width, $event)"
             label="height"
             type="number"
@@ -128,7 +217,7 @@ function setSize(wValue: string | number, hValue: string | number) {
       </v-card-text>
     </v-card>
 
-    <v-card variant="plain" v-if="!isImage">
+    <v-card variant="outlined" v-if="!isImage">
       <v-card-title>Style</v-card-title>
       <v-card-text>
         <div class="w-full flex justify-center">

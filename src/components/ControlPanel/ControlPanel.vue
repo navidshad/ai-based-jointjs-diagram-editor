@@ -51,7 +51,7 @@ export default defineComponent({
 
   data() {
     return {
-      tab: 'ai'
+      tab: 'primitives'
     }
   }
 })

@@ -178,13 +178,6 @@ export const useDiagramStore = defineStore('diagram', () => {
         })
       )
     }
-
-    // activate wrap text
-    element.attr('label/textWrap', {
-      width: element.size().width,
-      height: element.size().height,
-      ellipsis: true
-    })
   }
 
   function addStandardToolsViewsForLink(link: dia.Link) {
