@@ -104,14 +104,6 @@ function normalizeTextWrap() {
       textWrap.value.height = size.value.height
     }
 
-    // Check if the textWrap is smaller than the size
-    if (textWrap.value.width < size.value.width) {
-      textWrap.value.width = size.value.width
-    }
-    if (textWrap.value.height < size.value.height) {
-      textWrap.value.height = size.value.height
-    }
-
     updateTextWrap()
   }
 }
