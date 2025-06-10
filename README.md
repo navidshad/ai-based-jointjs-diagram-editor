@@ -50,39 +50,80 @@ You can setup the editor though query params of the iframe url. the following ta
 | `update_per_change`    | `Boolean` | Receive diagram update per any change on its graph |
 | `toggle_control_panel` | `Boolean` | Show/Hide control panel                            |
 
-## Recommended IDE Setup
+## Quick Start
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
 
-## Type Support for `.vue` Imports in TS
+### Installation
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+```bash
+# Clone the repository
+git clone <repository-url>
+cd diagram-designer
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+# Install dependencies
 npm install
-```
 
-### Compile and Hot-Reload for Development
-
-```sh
+# Start development server
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+The editor will be available at `http://localhost:5173`
 
-```sh
+### Production Build
+
+```bash
+# Build for production
 npm run build
+
+# Preview production build
+npm run preview
 ```
+
+## Architecture Overview
+
+The Diagram Designer is built with:
+
+- **Vue 3** + **TypeScript** for the frontend framework
+- **JointJS** for diagram rendering and manipulation
+- **Pinia** for state management
+- **Vuetify** for UI components
+- **LangChain** for AI-powered diagram generation
+- **Vite** for build tooling and development
+
+### Key Components
+
+- **Editor Layout**: Split-panel interface with canvas and control panel
+- **Diagram Canvas**: Interactive drawing surface with JointJS integration
+- **Control Panel**: Tabbed interface for shapes, properties, and AI features
+- **State Management**: Centralized stores for diagram and configuration data
+- **Communication Layer**: PostMessage API for iframe integration
+
+## Development
+
+For detailed development information, architecture details, and extension guides, see [DEVELOPMENT.md](./DEVELOPMENT.md).
+
+### Development Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server with hot reload
+npm run dev
+
+# Run tests
+npm run test:unit    # Unit tests with Vitest
+npm run test:e2e     # E2E tests with Playwright
+
+# Code quality
+npm run lint         # ESLint
+npm run format       # Prettier
+npm run type-check   # TypeScript checking
+```
+
+### Recommended IDE Setup
+
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
