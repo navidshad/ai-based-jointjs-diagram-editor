@@ -4,7 +4,7 @@ This a Jointjs Diagram Editor that generates json base diagrams, then you can us
 
 **Live Demo**: https://navidshad.github.io/ai-based-jointjs-diagram-editor/#/editor
 
-![Overview](https://raw.githubusercontent.com/navidshad/ai-based-jointjs-diagram-editor/main/img/overview.jpg)
+![Overview](https://raw.githubusercontent.com/navidshad/ai-based-jointjs-diagram-editor/main/img/overview.jpeg)
 
 ## Features
 
