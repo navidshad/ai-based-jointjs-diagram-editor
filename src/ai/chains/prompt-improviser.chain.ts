@@ -1,6 +1,6 @@
 import { LLMChain } from 'langchain/chains'
 import { ChatPromptTemplate } from 'langchain/prompts'
-import { gpt4Model } from '../llms/openai.llm'
+import { getGpt4Model } from '../llms/openai.llm'
 
 const chatTemplate = ChatPromptTemplate.fromMessages([
   [
@@ -12,8 +12,8 @@ const chatTemplate = ChatPromptTemplate.fromMessages([
   ['system', 'improvised prompt is:']
 ])
 
-export const promptImproviserChain = new LLMChain({ llm: gpt4Model, prompt: chatTemplate })
-
 export function improviseBasePrompt(basePrompt: string) {
+  const promptImproviserChain = new LLMChain({ llm: getGpt4Model(), prompt: chatTemplate })
+
   return promptImproviserChain.invoke({ base_prompt: basePrompt }).then(({ text }) => text)
 }

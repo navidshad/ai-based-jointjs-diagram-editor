@@ -1,6 +1,6 @@
 import { LLMChain } from 'langchain/chains'
 import { ChatPromptTemplate } from 'langchain/prompts'
-import { gpt4Model } from '../llms/openai.llm'
+import { getGpt4Model } from '../llms/openai.llm'
 
 import { extractJson } from '../helpers/json'
 import zodToJsonSchema from 'zod-to-json-schema'
@@ -30,13 +30,13 @@ const chatTemplate = ChatPromptTemplate.fromMessages([
   ['system', 'JSON result is:']
 ])
 
-export const manipulationChain = new LLMChain({ llm: gpt4Model, prompt: chatTemplate })
-
 export function manipulateDiagram(
   description: string,
   cells: dia.Cell[],
   options: { autoSelectIcons: boolean }
 ) {
+  const manipulationChain = new LLMChain({ llm: getGpt4Model(), prompt: chatTemplate })
+
   return manipulationChain
     .invoke({
       diagram_description: description,
