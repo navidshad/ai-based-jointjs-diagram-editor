@@ -1,10 +1,10 @@
 # diagram-designer
 
+![Overview](https://raw.githubusercontent.com/navidshad/ai-based-jointjs-diagram-editor/main/img/overview.jpeg)
+
 This a Jointjs Diagram Editor that generates json base diagrams, then you can use the json to render the diagram in your application.
 
 **Live Demo**: https://navidshad.github.io/ai-based-jointjs-diagram-editor/#/editor
-
-![Overview](https://raw.githubusercontent.com/navidshad/ai-based-jointjs-diagram-editor/main/img/overview.jpeg)
 
 ## Features
 
