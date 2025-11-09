@@ -1,6 +1,6 @@
 import { LLMChain } from 'langchain/chains'
 import { ChatPromptTemplate } from 'langchain/prompts'
-import { gpt4Model } from '../llms/openai.llm'
+import { getGpt4Model } from '../llms/openai.llm'
 
 import { mapCSVToSimplified, simplifiedCellsCSVSchema } from '../schema/csv.schema'
 import {
@@ -26,9 +26,9 @@ const chatTemplate = ChatPromptTemplate.fromMessages([
   ['system', 'CSV result is:']
 ])
 
-export const manipulationChain = new LLMChain({ llm: gpt4Model, prompt: chatTemplate })
-
 export function generateDiagramWithCSV(description: string, options: { autoSelectIcons: boolean }) {
+  const manipulationChain = new LLMChain({ llm: getGpt4Model(), prompt: chatTemplate })
+
   return manipulationChain
     .invoke({
       diagram_description: description,
